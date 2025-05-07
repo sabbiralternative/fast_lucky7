@@ -57,6 +57,7 @@ export const API = {
   banner: "",
   lotusHomeLobby: "",
   otpless: "",
+  auth: "",
 };
 
 export const Settings = {
@@ -90,4 +91,5 @@ export const Settings = {
   auraWolf: "",
   language: "",
   otpless: "",
+  lobby: "",
 };

@@ -1,7 +1,18 @@
+import { useSelector } from "react-redux";
+import { Settings } from "../../api";
+
 const Header = () => {
+  const { balance, username, token } = useSelector((state) => state.auth);
+  const handleOpenLobby = () => {
+    const url = `${Settings.lobby}/${token}`;
+    window.location.href = url;
+  };
   return (
     <div className="flex items-center justify-between w-full p-2 text-white shadow-xl bg-black/10">
-      <div className="flex items-center gap-1 py-2 pl-2 pr-3 text-xs font-semibold border rounded-full cursor-pointer border-white/10">
+      <div
+        onClick={handleOpenLobby}
+        className="flex items-center gap-1 py-2 pl-2 pr-3 text-xs font-semibold border rounded-full cursor-pointer border-white/10"
+      >
         <svg
           className="w-4 h-4"
           width={25}
@@ -99,11 +110,11 @@ const Header = () => {
               clipRule="evenodd"
             />
           </svg>
-          <span className="max-w-[150px] truncate"> b41.91_9967222220</span>
+          <span className="max-w-[150px] truncate">{username}</span>
           <span className="text-yellow">
             <div id="balanceAmountContainer" className="relative font-mono">
               <div className="font-medium">
-                <span>₹389.00</span>
+                <span>₹{balance}</span>
               </div>
             </div>
           </span>

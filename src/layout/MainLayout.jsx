@@ -1,6 +1,39 @@
+import { useDispatch, useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
+import { useAuthMutation } from "../redux/features/auth/authApi";
+import { useEffect } from "react";
+import { setUser } from "../redux/features/auth/authSlice";
 
 const MainLayout = () => {
+  const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const [handleAuth] = useAuthMutation();
+
+  useEffect(() => {
+    let intervalId;
+
+    if (token) {
+      const getUser = async () => {
+        const res = await handleAuth({ token }).unwrap();
+        console.log(res);
+        dispatch(
+          setUser({
+            username: res.username,
+            balance: res?.balance,
+            token,
+          })
+        );
+      };
+
+      getUser();
+
+      intervalId = setInterval(() => {
+        getUser();
+      }, 30000);
+    }
+
+    return () => clearInterval(intervalId);
+  }, [token, handleAuth, dispatch]);
   return (
     <div>
       <div

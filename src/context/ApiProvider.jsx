@@ -9,7 +9,7 @@ export const ApiContext = createContext(null);
 const ApiProvider = ({ children }) => {
   const [noticeLoaded, setNoticeLoaded] = useState(false);
   const [logo, setLogo] = useState("");
-  const baseUrl = notice?.result?.Settings?.baseUrl;
+  const baseUrl = notice?.result?.settings?.baseUrl;
 
   useEffect(() => {
     const fetchAPI = () => {

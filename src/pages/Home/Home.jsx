@@ -13,6 +13,7 @@ import {
 } from "../../utils/sound";
 
 const Home = () => {
+  const [styleIndex, setStyleIndex] = useState(0);
   const [double, setDouble] = useState(false);
   const [animation, setAnimation] = useState([]);
   const [showWinLossResult, setShowWinLossResult] = useState(false);
@@ -43,8 +44,11 @@ const Home = () => {
   const [stakeState, setStakeState] = useState(initialState);
 
   const handleClick = () => {
+    if (styleIndex === 5) {
+      setStyleIndex(0);
+    }
     playShuffleSound();
-    setShowCard(false);
+    setShowCard(true);
     setShowAnimationBtn(true);
     let steps = 0;
     const totalSteps = 6;
@@ -53,7 +57,7 @@ const Home = () => {
       if (step === 6) {
         setCards(fiftyTwoCard);
         setShowAnimationBtn(false);
-        setShowCard(true);
+        setShowCard(false);
       } else {
         const newCards = cards.map((card, i) => {
           return {
@@ -295,7 +299,12 @@ const Home = () => {
           <main className="relative flex flex-col w-full gap-1 p-2 overflow-hidden rounded lg:h-full h-fit bg-black/20">
             <div className="absolute top-1 left-1 rounded overflow-clip grid grid-cols-2 gap-0.5 text-[9px] lg:text-xs text-white/30" />
 
-            <FiftyTwoCard showCard={showCard} cards={cards} />
+            <FiftyTwoCard
+              setStyleIndex={setStyleIndex}
+              styleIndex={styleIndex}
+              showCard={showCard}
+              cards={cards}
+            />
             <BetSlip
               initialState={initialState}
               setAnimation={setAnimation}

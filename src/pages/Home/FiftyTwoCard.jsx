@@ -2,7 +2,7 @@
 
 import Card from "./Card";
 
-const FiftyTwoCard = ({ cards, showCard }) => {
+const FiftyTwoCard = ({ cards, showCard, styleIndex, setStyleIndex }) => {
   return (
     <>
       <div className="relative w-full max-w-lg mx-auto min-h-[260px] flex-grow perspectiveOg">
@@ -112,7 +112,8 @@ const FiftyTwoCard = ({ cards, showCard }) => {
               </div>
             );
           })}
-          {showCard && <Card />}
+
+          <Card styleIndex={styleIndex} setStyleIndex={setStyleIndex} />
 
           <div className="absolute flex flex-col items-center w-full h-24 max-w-xs bottom-10">
             <div className="w-full h-full relative w-full">

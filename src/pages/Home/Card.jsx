@@ -1,14 +1,73 @@
-const Card = () => {
+import { useEffect } from "react";
+
+const Card = ({ styleIndex, setStyleIndex }) => {
+  useEffect(() => {
+    if (styleIndex <= 4) {
+      const timer = setTimeout(() => {
+        setStyleIndex((prev) => prev + 1);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [styleIndex, setStyleIndex]);
+
+  console.log(styleIndex);
+
+  const styles = [
+    {
+      position: "absolute",
+      transition: "all 0.5s ease",
+      transformStyle: "preserve-3d",
+      right: "0%",
+      top: "0%",
+      transform: "translateZ(62px) rotateY(0deg)",
+    },
+    {
+      position: "absolute",
+      transition: "all 0.5s ease",
+      transformStyle: "preserve-3d",
+      right: "0%",
+      top: "0%",
+      transform: "translateZ(62px) rotateY(-30deg)",
+    },
+    {
+      position: "absolute",
+      transition: "all 0.5s ease",
+      transformStyle: "preserve-3d",
+      right: "12%",
+      top: "15%",
+      transform: "translateZ(51px) rotateY(-60deg)",
+    },
+    {
+      position: "absolute",
+      transition: "all 0.5s ease",
+      transformStyle: "preserve-3d",
+      right: "24%",
+      top: "30%",
+      transform: "translateZ(51px) rotateY(-120deg)",
+    },
+    {
+      position: "absolute",
+      transition: "all 0.5s ease",
+      transformStyle: "preserve-3d",
+      right: "37%",
+      top: "45%",
+      transform: "translateZ(51px) rotateY(-180deg)",
+    },
+    {
+      position: "absolute",
+      transition: "all 0.5s ease",
+      transformStyle: "preserve-3d",
+      right: "40%",
+      top: "48%",
+      transform: "translateZ(51px) rotateY(-180deg)",
+    },
+  ];
+
   return (
     <div
       className="border-stakeGreen relative border-2 shadow-sm transition-all ease-in-out duration-200 h-24 lg:h-40 aspect-[5/7] rounded bg-white"
       style={{
-        position: "absolute",
-        right: "40%",
-        top: "48%",
-        transform: "translateZ(51px) rotateY(-180deg)",
-        transitionDelay: "0s",
-        transformStyle: "preserve-3d",
+        ...styles[styleIndex],
       }}
     >
       <div className="h-full w-full  bg-white  card-front-deck rounded  relative ">

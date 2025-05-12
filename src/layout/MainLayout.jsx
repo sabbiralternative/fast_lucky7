@@ -15,7 +15,7 @@ const MainLayout = () => {
     if (token) {
       const getUser = async () => {
         const res = await handleAuth({ token }).unwrap();
-        console.log(res);
+
         dispatch(
           setUser({
             username: res.username,

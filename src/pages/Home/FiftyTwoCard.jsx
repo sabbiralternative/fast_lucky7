@@ -1,6 +1,8 @@
 // import FiftyTwoCardNotUsing from "./FiftyTwoCardNotUsing";
 
-const FiftyTwoCard = ({ cards }) => {
+import Card from "./Card";
+
+const FiftyTwoCard = ({ cards, showCard }) => {
   return (
     <>
       <div className="relative w-full max-w-lg mx-auto min-h-[260px] flex-grow perspectiveOg">
@@ -110,6 +112,7 @@ const FiftyTwoCard = ({ cards }) => {
               </div>
             );
           })}
+          {showCard && <Card />}
 
           <div className="absolute flex flex-col items-center w-full h-24 max-w-xs bottom-10">
             <div className="w-full h-full relative w-full">

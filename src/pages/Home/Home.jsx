@@ -44,11 +44,12 @@ const Home = () => {
   const [stakeState, setStakeState] = useState(initialState);
 
   const handleClick = () => {
-    if (styleIndex === 5) {
+    if (styleIndex === 1) {
+      setShowCard(false);
       setStyleIndex(0);
     }
     playShuffleSound();
-    setShowCard(true);
+
     setShowAnimationBtn(true);
     let steps = 0;
     const totalSteps = 6;
@@ -57,7 +58,7 @@ const Home = () => {
       if (step === 6) {
         setCards(fiftyTwoCard);
         setShowAnimationBtn(false);
-        setShowCard(false);
+        setShowCard(true);
       } else {
         const newCards = cards.map((card, i) => {
           return {

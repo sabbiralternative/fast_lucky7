@@ -113,7 +113,9 @@ const FiftyTwoCard = ({ cards, showCard, styleIndex, setStyleIndex }) => {
             );
           })}
 
-          <Card styleIndex={styleIndex} setStyleIndex={setStyleIndex} />
+          {showCard && (
+            <Card styleIndex={styleIndex} setStyleIndex={setStyleIndex} />
+          )}
 
           <div className="absolute flex flex-col items-center w-full h-24 max-w-xs bottom-10">
             <div className="w-full h-full relative w-full">

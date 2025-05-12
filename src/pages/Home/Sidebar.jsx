@@ -9,6 +9,7 @@ const Sidebar = ({
   handleDoubleStake,
   handleUndoStake,
   isPlaceStake,
+  totalPlaceBet,
 }) => {
   const handleClear = () => {
     setStakeState(initialState);
@@ -40,7 +41,7 @@ const Sidebar = ({
         ) : (
           <button
             onClick={() => {
-              handleClick();
+              handleClick(true);
               playShuffleSound();
             }}
             id="step-placeBet"
@@ -52,7 +53,7 @@ const Sidebar = ({
 
         <div className="flex items-center justify-center w-full h-20 gap-6">
           <button
-            onClick={handleClick}
+            onClick={() => handleClick(false)}
             className="flex flex-col text-white/50 items-center justify-center gap-0.5 text-[10px] font-medium disabled:opacity-40"
           >
             <svg
@@ -143,9 +144,9 @@ const Sidebar = ({
         </div>
         <div className="flex items-center justify-between w-full px-4 py-2 mb-2 text-sm font-medium rounded bg-black/20">
           <span className="text-white/80">Total Bet</span>
-          <span className="font-mono text-yellow">0</span>
+          <span className="font-mono text-yellow">{totalPlaceBet}</span>
         </div>
-        <div
+        {/* <div
           className="flex flex-col items-center w-full gap-2 lg:flex-col-reverse"
           style={{ pointerEvents: "auto" }}
         >
@@ -157,7 +158,7 @@ const Sidebar = ({
               Auto
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
       <div
         id="step-gameParticipants"

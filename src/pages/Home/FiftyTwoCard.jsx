@@ -2,7 +2,13 @@
 
 import Card from "./Card";
 
-const FiftyTwoCard = ({ cards, showCard, styleIndex, setStyleIndex }) => {
+const FiftyTwoCard = ({
+  cards,
+  showCard,
+  styleIndex,
+  setStyleIndex,
+  showCardAnimation,
+}) => {
   return (
     <>
       <div className="relative w-full max-w-lg mx-auto min-h-[260px] flex-grow perspectiveOg">
@@ -114,7 +120,11 @@ const FiftyTwoCard = ({ cards, showCard, styleIndex, setStyleIndex }) => {
           })}
 
           {showCard && (
-            <Card styleIndex={styleIndex} setStyleIndex={setStyleIndex} />
+            <Card
+              showCardAnimation={showCardAnimation}
+              styleIndex={styleIndex}
+              setStyleIndex={setStyleIndex}
+            />
           )}
 
           <div className="absolute flex flex-col items-center w-full h-24 max-w-xs bottom-10">

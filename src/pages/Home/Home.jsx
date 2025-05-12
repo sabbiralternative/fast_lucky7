@@ -5,50 +5,53 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { changeCardsProperty, fiftyTwoCard } from "../../static/fiftyTwoCard";
 import { useSelector } from "react-redux";
-import { useGetEventDetailsQuery } from "../../redux/features/events/events";
+import { useOrderMutation } from "../../redux/features/events/events";
 import {
   playShuffleSound,
   playStakeChangeSound,
   playUndoSound,
 } from "../../utils/sound";
+import toast from "react-hot-toast";
 
 const Home = () => {
+  const [addOrder] = useOrderMutation();
+  const [showCardAnimation, setShowCardAnimation] = useState(false);
   const [styleIndex, setStyleIndex] = useState(0);
   const [double, setDouble] = useState(false);
   const [animation, setAnimation] = useState([]);
-  const [showWinLossResult, setShowWinLossResult] = useState(false);
-  const [totalWinAmount, setTotalWinAmount] = useState(null);
-  const [toast, setToast] = useState(null);
-  const { data } = useGetEventDetailsQuery(
-    { eventTypeId: 1000, eventId: 10007 },
-    { pollingInterval: 1000 }
-  );
-  const firstEvent = data?.result?.[0];
+  const [totalWinAmount, setTotalWinAmount] = useState(0);
   const { stake } = useSelector((state) => state.global);
   const [cards, setCards] = useState(fiftyTwoCard);
   const [showAnimationBtn, setShowAnimationBtn] = useState(false);
   const [showCard, setShowCard] = useState(false);
   const initialState = {
-    even: { show: false, stake },
-    up: { show: false, stake },
-    odd: { show: false, stake },
-    red: { show: false, stake },
-    down: { show: false, stake },
-    black: { show: false, stake },
-    seven: { show: false, stake },
-    diamond: { show: false, stake },
-    heart: { show: false, stake },
-    spade: { show: false, stake },
-    club: { show: false, stake },
+    Even: { show: false, stake },
+    Up: { show: false, stake },
+    Odd: { show: false, stake },
+    Red: { show: false, stake },
+    Down: { show: false, stake },
+    Black: { show: false, stake },
+    Seven: { show: false, stake },
+    Diamond: { show: false, stake },
+    Heart: { show: false, stake },
+    Spade: { show: false, stake },
+    Club: { show: false, stake },
   };
   const [stakeState, setStakeState] = useState(initialState);
 
-  const handleClick = () => {
-    if (styleIndex === 1) {
-      setShowCard(true);
-      setTimeout(() => {
-        setShowCard(false);
-      }, 300);
+  const handleClick = (shuffle) => {
+    if (shuffle) {
+      setShowCardAnimation(true);
+    } else {
+      setShowAnimationBtn(false);
+    }
+    if (styleIndex === 1 && shuffle) {
+      if (shuffle) {
+        setShowCard(true);
+        setTimeout(() => {
+          setShowCard(false);
+        }, 300);
+      }
       setStyleIndex(0);
     }
     playShuffleSound();
@@ -60,7 +63,48 @@ const Home = () => {
       if (step === 6) {
         setCards(fiftyTwoCard);
         setShowAnimationBtn(false);
-        setShowCard(true);
+        if (shuffle) {
+          setShowCard(true);
+        }
+
+        const filterPlacedBet = Object.values(stakeState).filter(
+          (bet) => bet.show
+        );
+        let payload = filterPlacedBet.map((bet) => ({
+          eventId: 30001,
+          eventName: "Fast Lucky 7A",
+          isback: 0,
+          price: bet?.price,
+          runner_name: bet?.runner_name,
+          stake: bet?.stake,
+        }));
+
+        if (payload?.length > 0) {
+          const handleOrder = async () => {
+            const res = await addOrder(payload).unwrap();
+            payload = [];
+            if (res?.success) {
+              setTotalWinAmount(0);
+              let totalBets = [];
+
+              for (let bet of filterPlacedBet) {
+                totalBets.push({
+                  eventId: 30001,
+                  eventName: "Fast Lucky 7A",
+                  isback: 0,
+                  price: bet?.price,
+                  runner_name: bet?.runner_name,
+                  stake: bet?.stake,
+                });
+              }
+              localStorage.setItem("totalBetPlace", JSON.stringify(totalBets));
+
+              toast.success(res?.Message);
+              setStakeState(initialState);
+            }
+          };
+          handleOrder();
+        }
       } else {
         const newCards = cards.map((card, i) => {
           return {
@@ -189,6 +233,14 @@ const Home = () => {
     });
   };
   const isPlaceStake = Object.values(stakeState).find((item) => item?.show);
+
+  let totalPlaceBet = 0;
+  Object.values(stakeState).forEach((item) => {
+    if (item?.show) {
+      totalPlaceBet += item?.stake;
+    }
+  });
+
   return (
     <main className="flex flex-col items-center lg:h-screen bg-zinc-800">
       <div className="react-joyride" />
@@ -303,21 +355,16 @@ const Home = () => {
             <div className="absolute top-1 left-1 rounded overflow-clip grid grid-cols-2 gap-0.5 text-[9px] lg:text-xs text-white/30" />
 
             <FiftyTwoCard
+              showCardAnimation={showCardAnimation}
               setStyleIndex={setStyleIndex}
               styleIndex={styleIndex}
               showCard={showCard}
               cards={cards}
             />
             <BetSlip
-              initialState={initialState}
               setAnimation={setAnimation}
-              setShowWinLossResult={setShowWinLossResult}
               setStakeState={setStakeState}
-              setToast={setToast}
-              setTotalWinAmount={setTotalWinAmount}
               stakeState={stakeState}
-              data={data?.result}
-              status={firstEvent?.status}
               animation={animation}
               double={double}
             />
@@ -398,6 +445,7 @@ const Home = () => {
           </div>
         </div>
         <Sidebar
+          totalPlaceBet={totalPlaceBet}
           isPlaceStake={isPlaceStake}
           handleUndoStake={handleUndoStake}
           handleDoubleStake={handleDoubleStake}

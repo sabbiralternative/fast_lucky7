@@ -1,43 +1,28 @@
 import { useSelector } from "react-redux";
-import { useOrderMutation } from "../../redux/features/events/events";
 import { useEffect } from "react";
-import { Status } from "../../const";
-import Stake from "../../components/shared/Stake/Stake";
 import { playStakeChangeSound } from "../../utils/sound";
+import StakeAnimation from "./StakeAnimation";
 
 const BetSlip = ({
-  data,
   setAnimation,
   setStakeState,
-  status,
-  initialState,
   stakeState,
-  setShowWinLossResult,
-  setTotalWinAmount,
-  setToast,
   animation,
   double,
 }) => {
-  const [addOrder] = useOrderMutation();
   const { stake } = useSelector((state) => state.global);
 
-  // Generic function to update stake state
   const handleStakeChange = (payload) => {
     playStakeChangeSound();
-    const { key, data, dataIndex, runnerIndex, type } = payload;
+    const { key } = payload;
     setAnimation([key]);
     const formatData = {
-      marketId: data?.[dataIndex]?.id,
-      roundId: data?.[dataIndex]?.roundId,
-      name: data?.[dataIndex]?.name,
-      eventId: data?.[dataIndex]?.eventId,
-      eventName: data?.[dataIndex]?.eventName,
-      selection_id: data?.[dataIndex]?.runners?.[runnerIndex]?.id,
-      runner_name: data?.[dataIndex]?.runners?.[runnerIndex]?.name,
-      isback: type === "back" ? 0 : 1,
-      event_id: data?.[dataIndex]?.eventId,
-      event_type_id: data?.[dataIndex]?.event_type_id,
-      price: data?.[dataIndex]?.runners?.[runnerIndex]?.[type]?.[0]?.price,
+      eventId: 30001,
+      eventName: "Fast Lucky 7A",
+      isback: 0,
+      runner_name: payload.runner_name,
+      price: payload.price,
+      stake: payload.stake,
     };
     const timeout = setTimeout(() => {
       setAnimation([]);
@@ -52,20 +37,16 @@ const BetSlip = ({
         return {
           ...prev,
           [key]: {
-            roundId: formatData?.roundId,
-            name: formatData?.name,
-            eventId: formatData?.eventId,
-            eventName: formatData?.eventName,
+            eventId: formatData.eventId,
+            eventName: formatData.eventName,
+            isback: formatData.isback,
+            runner_name: formatData.runner_name,
+            price: formatData.price,
             show: true,
             animation: false,
             stake: prev[key].show
               ? prev[key].stake + prev[key].actionBy
               : prev[key].stake,
-            marketId: formatData?.marketId,
-            selection_id: formatData?.selection_id,
-            price: formatData?.price,
-            runner_name: formatData?.runner_name,
-            isback: formatData?.isback,
             serial: prev[key]?.serial ? prev[key]?.serial : maxSerial + 1,
             actionBy: stake,
             undo: [...(prev[key]?.undo || []), stake],
@@ -76,14 +57,6 @@ const BetSlip = ({
 
     return () => clearTimeout(timeout);
   };
-
-  // Reset state when status is OPEN
-  useEffect(() => {
-    if (status === Status.OPEN) {
-      setStakeState(initialState);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
 
   useEffect(() => {
     setStakeState((prev) => {
@@ -99,50 +72,6 @@ const BetSlip = ({
     });
   }, [stake]); // Runs when stake value changes
 
-  useEffect(() => {
-    const filterPlacedBet = Object.values(stakeState).filter((bet) => bet.show);
-    let payload = filterPlacedBet.map((bet) => ({
-      roundId: bet?.roundId,
-      name: bet?.name,
-      eventId: bet?.eventId,
-      eventName: bet?.eventName,
-      marketId: bet?.marketId,
-      selection_id: bet?.selection_id,
-      runner_name: bet?.runner_name,
-      stake: bet?.stake,
-      isback: bet?.isback,
-      price: bet?.price,
-    }));
-
-    if (status === Status.SUSPENDED && payload?.length > 0) {
-      const handleOrder = async () => {
-        const res = await addOrder(payload).unwrap();
-        payload = [];
-        if (res?.success) {
-          setShowWinLossResult(false);
-          setTotalWinAmount(null);
-          let totalBets = [];
-
-          for (let bet of filterPlacedBet) {
-            totalBets.push({
-              selection_id: bet.selection_id,
-              price: bet?.price,
-              eventId: bet?.eventId,
-              marketId: bet?.marketId,
-              name: bet?.name,
-              stake: bet?.stake,
-            });
-          }
-          localStorage.setItem("totalBetPlace", JSON.stringify(totalBets));
-
-          setToast(res?.Message);
-        }
-      };
-      handleOrder();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addOrder, status]);
-
   return (
     <div
       id="step-betOptions"
@@ -152,11 +81,9 @@ const BetSlip = ({
       <div
         onClick={() =>
           handleStakeChange({
-            key: "even",
-            data,
-            dataIndex: 1,
-            runnerIndex: 0,
-            type: "back",
+            key: "Even",
+            runner_name: "Even",
+            price: 2.1,
           })
         }
         className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
@@ -169,28 +96,20 @@ const BetSlip = ({
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x2.1
         </span>
-        <div className="relative w-10 h-10">
-          <div
-            className={`${
-              animation.includes("even")
-                ? "absolute top-0 visible transition-all duration-500 "
-                : "absolute -top-16 invisible opacity-0"
-            }  z-50`}
-          >
-            <Stake stake={double ? stakeState?.even?.stake : stake} />
-          </div>
-
-          {stakeState?.even?.show && <Stake stake={stakeState?.even?.stake} />}
-        </div>
+        <StakeAnimation
+          animation={animation}
+          double={double}
+          runner={"Even"}
+          stake={stake}
+          stakeState={stakeState}
+        />
       </div>
       <div
         onClick={() =>
           handleStakeChange({
-            key: "up",
-            data,
-            dataIndex: 0,
-            runnerIndex: 1,
-            type: "back",
+            key: "Up",
+            runner_name: "Up",
+            price: 2,
           })
         }
         className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
@@ -203,27 +122,20 @@ const BetSlip = ({
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x2
         </span>
-        <div className="relative w-10 h-10">
-          <div
-            className={`${
-              animation.includes("up")
-                ? "absolute top-0 visible transition-all duration-500 "
-                : "absolute -top-16 invisible opacity-0"
-            }  z-50`}
-          >
-            <Stake stake={double ? stakeState?.up?.stake : stake} />
-          </div>
-          {stakeState?.up?.show && <Stake stake={stakeState?.up?.stake} />}
-        </div>
+        <StakeAnimation
+          animation={animation}
+          double={double}
+          runner={"Up"}
+          stake={stake}
+          stakeState={stakeState}
+        />
       </div>
       <div
         onClick={() =>
           handleStakeChange({
-            key: "odd",
-            data,
-            dataIndex: 1,
-            runnerIndex: 1,
-            type: "back",
+            key: "Odd",
+            runner_name: "Odd",
+            price: 1.8,
           })
         }
         className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
@@ -236,27 +148,20 @@ const BetSlip = ({
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x1.8
         </span>
-        <div className="relative w-10 h-10">
-          <div
-            className={`${
-              animation.includes("odd")
-                ? "absolute top-0 visible transition-all duration-500 "
-                : "absolute -top-16 invisible opacity-0"
-            }  z-50`}
-          >
-            <Stake stake={double ? stakeState?.odd?.stake : stake} />
-          </div>
-          {stakeState?.odd?.show && <Stake stake={stakeState?.odd?.stake} />}
-        </div>
+        <StakeAnimation
+          animation={animation}
+          double={double}
+          runner={"Odd"}
+          stake={stake}
+          stakeState={stakeState}
+        />
       </div>
       <div
         onClick={() =>
           handleStakeChange({
-            key: "diamond",
-            data,
-            dataIndex: 5,
-            runnerIndex: 0,
-            type: "back",
+            key: "Diamond",
+            runner_name: "Diamond",
+            price: 3.75,
           })
         }
         className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
@@ -269,29 +174,20 @@ const BetSlip = ({
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x3.75
         </span>
-        <div className="relative w-10 h-10">
-          <div
-            className={`${
-              animation.includes("diamond")
-                ? "absolute top-0 visible transition-all duration-500"
-                : "absolute -top-16 invisible opacity-0"
-            }  z-50`}
-          >
-            <Stake stake={double ? stakeState?.diamond?.stake : stake} />
-          </div>
-          {stakeState?.diamond?.show && (
-            <Stake stake={stakeState?.diamond?.stake} />
-          )}
-        </div>
+        <StakeAnimation
+          animation={animation}
+          double={double}
+          runner={"Diamond"}
+          stake={stake}
+          stakeState={stakeState}
+        />
       </div>
       <div
         onClick={() =>
           handleStakeChange({
-            key: "heart",
-            data,
-            dataIndex: 5,
-            runnerIndex: 1,
-            type: "back",
+            key: "Heart",
+            runner_name: "Heart",
+            price: 3.75,
           })
         }
         className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
@@ -304,29 +200,20 @@ const BetSlip = ({
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x3.75
         </span>
-        <div className="relative w-10 h-10">
-          <div
-            className={`${
-              animation.includes("heart")
-                ? "absolute top-0 visible transition-all duration-500"
-                : "absolute -top-16 invisible opacity-0"
-            }  z-50`}
-          >
-            <Stake stake={double ? stakeState?.heart?.stake : stake} />
-          </div>
-          {stakeState?.heart?.show && (
-            <Stake stake={stakeState?.heart?.stake} />
-          )}
-        </div>
+        <StakeAnimation
+          animation={animation}
+          double={double}
+          runner={"Heart"}
+          stake={stake}
+          stakeState={stakeState}
+        />
       </div>
       <div
         onClick={() =>
           handleStakeChange({
-            key: "seven",
-            data,
-            dataIndex: 0,
-            runnerIndex: 2,
-            type: "back",
+            key: "Seven",
+            runner_name: "Seven",
+            price: 11.5,
           })
         }
         className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
@@ -339,29 +226,20 @@ const BetSlip = ({
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x11.5
         </span>
-        <div className="relative w-10 h-10">
-          <div
-            className={`${
-              animation.includes("seven")
-                ? "absolute top-0 visible transition-all duration-500"
-                : "absolute -top-16 invisible opacity-0"
-            }  z-50`}
-          >
-            <Stake stake={double ? stakeState?.seven?.stake : stake} />
-          </div>
-          {stakeState?.seven?.show && (
-            <Stake stake={stakeState?.seven?.stake} />
-          )}
-        </div>
+        <StakeAnimation
+          animation={animation}
+          double={double}
+          runner={"Seven"}
+          stake={stake}
+          stakeState={stakeState}
+        />
       </div>
       <div
         onClick={() =>
           handleStakeChange({
-            key: "spade",
-            data,
-            dataIndex: 5,
-            runnerIndex: 2,
-            type: "back",
+            key: "Spade",
+            runner_name: "Spade",
+            price: 3.75,
           })
         }
         className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
@@ -374,29 +252,20 @@ const BetSlip = ({
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x3.75
         </span>
-        <div className="relative w-10 h-10">
-          <div
-            className={`${
-              animation.includes("spade")
-                ? "absolute top-0 visible transition-all duration-500"
-                : "absolute -top-16 invisible opacity-0"
-            }  z-50`}
-          >
-            <Stake stake={double ? stakeState?.spade?.stake : stake} />
-          </div>
-          {stakeState?.spade?.show && (
-            <Stake stake={stakeState?.spade?.stake} />
-          )}
-        </div>
+        <StakeAnimation
+          animation={animation}
+          double={double}
+          runner={"Spade"}
+          stake={stake}
+          stakeState={stakeState}
+        />
       </div>
       <div
         onClick={() =>
           handleStakeChange({
-            key: "club",
-            data,
-            dataIndex: 5,
-            runnerIndex: 3,
-            type: "back",
+            key: "Club",
+            runner_name: "Club",
+            price: 3.75,
           })
         }
         className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
@@ -409,27 +278,20 @@ const BetSlip = ({
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x3.75
         </span>
-        <div className="relative w-10 h-10">
-          <div
-            className={`${
-              animation.includes("club")
-                ? "absolute top-0 visible transition-all duration-500"
-                : "absolute -top-16 invisible opacity-0"
-            }  z-50`}
-          >
-            <Stake stake={double ? stakeState?.club?.stake : stake} />
-          </div>
-          {stakeState?.club?.show && <Stake stake={stakeState?.club?.stake} />}
-        </div>
+        <StakeAnimation
+          animation={animation}
+          double={double}
+          runner={"Club"}
+          stake={stake}
+          stakeState={stakeState}
+        />
       </div>
       <div
         onClick={() =>
           handleStakeChange({
-            key: "red",
-            data,
-            dataIndex: 2,
-            runnerIndex: 0,
-            type: "back",
+            key: "Red",
+            runner_name: "Red",
+            price: 1.98,
           })
         }
         className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
@@ -442,27 +304,20 @@ const BetSlip = ({
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x1.98
         </span>
-        <div className="relative w-10 h-10">
-          <div
-            className={`${
-              animation.includes("red")
-                ? "absolute top-0 visible transition-all duration-500 "
-                : "absolute -top-16 invisible opacity-0"
-            }  z-50`}
-          >
-            <Stake stake={double ? stakeState?.red?.stake : stake} />
-          </div>
-          {stakeState?.red?.show && <Stake stake={stakeState?.red?.stake} />}
-        </div>
+        <StakeAnimation
+          animation={animation}
+          double={double}
+          runner={"Red"}
+          stake={stake}
+          stakeState={stakeState}
+        />
       </div>
       <div
         onClick={() =>
           handleStakeChange({
-            key: "down",
-            data,
-            dataIndex: 0,
-            runnerIndex: 0,
-            type: "back",
+            key: "Down",
+            runner_name: "Down",
+            price: 2,
           })
         }
         className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
@@ -475,27 +330,20 @@ const BetSlip = ({
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x2
         </span>
-        <div className="relative w-10 h-10">
-          <div
-            className={`${
-              animation.includes("down")
-                ? "absolute top-0 visible transition-all duration-500 "
-                : "absolute -top-16 invisible opacity-0"
-            }  z-50`}
-          >
-            <Stake stake={double ? stakeState?.down?.stake : stake} />
-          </div>
-          {stakeState?.down?.show && <Stake stake={stakeState?.down?.stake} />}
-        </div>
+        <StakeAnimation
+          animation={animation}
+          double={double}
+          runner={"Relative"}
+          stake={stake}
+          stakeState={stakeState}
+        />
       </div>
       <div
         onClick={() =>
           handleStakeChange({
-            key: "black",
-            data,
-            dataIndex: 2,
-            runnerIndex: 1,
-            type: "back",
+            key: "Black",
+            runner_name: "Black",
+            price: 1.98,
           })
         }
         className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
@@ -508,20 +356,13 @@ const BetSlip = ({
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x1.98
         </span>
-        <div className="relative w-10 h-10">
-          <div
-            className={`${
-              animation.includes("black")
-                ? "absolute top-0 visible transition-all duration-500 "
-                : "absolute -top-16 invisible opacity-0"
-            }  z-50`}
-          >
-            <Stake stake={double ? stakeState?.black?.stake : stake} />
-          </div>
-          {stakeState?.black?.show && (
-            <Stake stake={stakeState?.black?.stake} />
-          )}
-        </div>
+        <StakeAnimation
+          animation={animation}
+          double={double}
+          runner={"Black"}
+          stake={stake}
+          stakeState={stakeState}
+        />
       </div>
     </div>
   );

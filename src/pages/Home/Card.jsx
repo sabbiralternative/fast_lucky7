@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 
-const Card = ({ styleIndex, setStyleIndex }) => {
+const Card = ({ styleIndex, setStyleIndex, showCardAnimation }) => {
   useEffect(() => {
-    if (styleIndex <= 0) {
+    if (styleIndex <= 0 && showCardAnimation) {
       const timer = setTimeout(() => {
         setStyleIndex((prev) => prev + 1);
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [styleIndex, setStyleIndex]);
+  }, [styleIndex, setStyleIndex, showCardAnimation]);
 
   const styles = [
     {

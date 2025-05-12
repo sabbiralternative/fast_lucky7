@@ -12,6 +12,7 @@ import {
   playUndoSound,
 } from "../../utils/sound";
 import toast from "react-hot-toast";
+import { calculateTotalWin } from "../../utils";
 
 const Home = () => {
   const [addOrder] = useOrderMutation();
@@ -19,6 +20,11 @@ const Home = () => {
   const [styleIndex, setStyleIndex] = useState(0);
   const [double, setDouble] = useState(false);
   const [animation, setAnimation] = useState([]);
+  const [winCard, setWinCard] = useState({
+    card: null,
+    suit: null,
+    rank: null,
+  });
   const [totalWinAmount, setTotalWinAmount] = useState(0);
   const { stake } = useSelector((state) => state.global);
   const [cards, setCards] = useState(fiftyTwoCard);
@@ -40,6 +46,57 @@ const Home = () => {
   const [stakeState, setStakeState] = useState(initialState);
 
   const handleClick = (shuffle) => {
+    setWinCard({
+      card: null,
+      rank: null,
+      suit: null,
+    });
+    const filterPlacedBet = Object.values(stakeState).filter((bet) => bet.show);
+    let payload = filterPlacedBet.map((bet) => ({
+      eventId: 30001,
+      eventName: "Fast Lucky 7A",
+      isback: 0,
+      price: bet?.price,
+      runner_name: bet?.runner_name,
+      stake: bet?.stake,
+    }));
+
+    if (payload?.length > 0) {
+      const handleOrder = async () => {
+        const res = await addOrder(payload).unwrap();
+
+        if (res?.success) {
+          const calculateWin = calculateTotalWin(res?.rank, res?.suit, payload);
+          setTotalWinAmount(calculateWin);
+          payload = [];
+
+          setWinCard({
+            card: res?.card,
+            suit: res?.suit,
+            rank: res?.rank,
+          });
+
+          let totalBets = [];
+
+          for (let bet of filterPlacedBet) {
+            totalBets.push({
+              eventId: 30001,
+              eventName: "Fast Lucky 7A",
+              isback: 0,
+              price: bet?.price,
+              runner_name: bet?.runner_name,
+              stake: bet?.stake,
+            });
+          }
+          localStorage.setItem("totalBetPlace", JSON.stringify(totalBets));
+
+          setStakeState(initialState);
+        } else {
+          toast.success(res?.error?.description[0]?.message);
+        }
+      };
+      handleOrder();
+    }
     if (shuffle) {
       setShowCardAnimation(true);
     } else {
@@ -65,45 +122,6 @@ const Home = () => {
         setShowAnimationBtn(false);
         if (shuffle) {
           setShowCard(true);
-        }
-
-        const filterPlacedBet = Object.values(stakeState).filter(
-          (bet) => bet.show
-        );
-        let payload = filterPlacedBet.map((bet) => ({
-          eventId: 30001,
-          eventName: "Fast Lucky 7A",
-          isback: 0,
-          price: bet?.price,
-          runner_name: bet?.runner_name,
-          stake: bet?.stake,
-        }));
-
-        if (payload?.length > 0) {
-          const handleOrder = async () => {
-            const res = await addOrder(payload).unwrap();
-            payload = [];
-            if (res?.success) {
-              setTotalWinAmount(0);
-              let totalBets = [];
-
-              for (let bet of filterPlacedBet) {
-                totalBets.push({
-                  eventId: 30001,
-                  eventName: "Fast Lucky 7A",
-                  isback: 0,
-                  price: bet?.price,
-                  runner_name: bet?.runner_name,
-                  stake: bet?.stake,
-                });
-              }
-              localStorage.setItem("totalBetPlace", JSON.stringify(totalBets));
-
-              toast.success(res?.Message);
-              setStakeState(initialState);
-            }
-          };
-          handleOrder();
         }
       } else {
         const newCards = cards.map((card, i) => {
@@ -355,6 +373,8 @@ const Home = () => {
             <div className="absolute top-1 left-1 rounded overflow-clip grid grid-cols-2 gap-0.5 text-[9px] lg:text-xs text-white/30" />
 
             <FiftyTwoCard
+              totalWinAmount={totalWinAmount}
+              winCard={winCard}
               showCardAnimation={showCardAnimation}
               setStyleIndex={setStyleIndex}
               styleIndex={styleIndex}
@@ -362,6 +382,8 @@ const Home = () => {
               cards={cards}
             />
             <BetSlip
+              winCard={winCard}
+              setWinCard={setWinCard}
               setAnimation={setAnimation}
               setStakeState={setStakeState}
               stakeState={stakeState}

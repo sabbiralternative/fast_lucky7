@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { playStakeChangeSound } from "../../utils/sound";
 import StakeAnimation from "./StakeAnimation";
+import { isDown, isEven, isOdd, isSeven, isUp } from "../../utils";
 
 const BetSlip = ({
   setAnimation,
@@ -9,10 +10,20 @@ const BetSlip = ({
   stakeState,
   animation,
   double,
+  winCard,
+  setWinCard,
 }) => {
+  const rank = winCard?.rank && parseFloat(winCard?.rank);
+  const suit = winCard?.suit;
+
   const { stake } = useSelector((state) => state.global);
 
   const handleStakeChange = (payload) => {
+    setWinCard({
+      card: null,
+      suit: null,
+      rank: null,
+    });
     playStakeChangeSound();
     const { key } = payload;
     setAnimation([key]);
@@ -75,7 +86,7 @@ const BetSlip = ({
   return (
     <div
       id="step-betOptions"
-      className="grid gap-0.5 justify-items-center  lg:pb-12 justify-center grid-cols-6 mx-auto max-w-md w-full p-2 "
+      className={`grid gap-0.5 justify-items-center  lg:pb-12 justify-center grid-cols-6 mx-auto max-w-md w-full p-2`}
       style={{ pointerEvents: "auto" }}
     >
       <div
@@ -86,8 +97,8 @@ const BetSlip = ({
             price: 2.1,
           })
         }
-        className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          border-transparent"
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+            ${isEven(rank) ? "border-stakeGreen" : "border-transparent"}`}
         style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">
@@ -112,8 +123,8 @@ const BetSlip = ({
             price: 2,
           })
         }
-        className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          border-transparent"
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+          ${isUp(rank) ? "border-stakeGreen" : "border-transparent"}`}
         style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-green">
@@ -138,8 +149,8 @@ const BetSlip = ({
             price: 1.8,
           })
         }
-        className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          border-transparent"
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+         ${isOdd(rank) ? "border-stakeGreen" : "border-transparent"}`}
         style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">
@@ -156,6 +167,7 @@ const BetSlip = ({
           stakeState={stakeState}
         />
       </div>
+
       <div
         onClick={() =>
           handleStakeChange({
@@ -164,8 +176,8 @@ const BetSlip = ({
             price: 3.75,
           })
         }
-        className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          border-transparent"
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+           ${suit === "D" ? "border-stakeGreen" : "border-transparent"}`}
         style={{ gridColumn: "span 1 / span 1", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-red">
@@ -190,8 +202,8 @@ const BetSlip = ({
             price: 3.75,
           })
         }
-        className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          border-transparent"
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+          ${suit === "H" ? "border-stakeGreen" : "border-transparent"}`}
         style={{ gridColumn: "span 1 / span 1", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-red">
@@ -208,6 +220,7 @@ const BetSlip = ({
           stakeState={stakeState}
         />
       </div>
+
       <div
         onClick={() =>
           handleStakeChange({
@@ -216,8 +229,8 @@ const BetSlip = ({
             price: 11.5,
           })
         }
-        className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          border-transparent"
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+          ${isSeven(rank) ? "border-stakeGreen" : "border-transparent"}`}
         style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-blue">
@@ -234,6 +247,7 @@ const BetSlip = ({
           stakeState={stakeState}
         />
       </div>
+
       <div
         onClick={() =>
           handleStakeChange({
@@ -242,8 +256,8 @@ const BetSlip = ({
             price: 3.75,
           })
         }
-        className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          border-transparent"
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+           ${suit === "S" ? "border-stakeGreen" : "border-transparent"}`}
         style={{ gridColumn: "span 1 / span 1", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">
@@ -268,8 +282,10 @@ const BetSlip = ({
             price: 3.75,
           })
         }
-        className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          border-transparent"
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+          border-transparent ${
+            suit === "C" ? "border-stakeGreen" : "border-transparent"
+          }`}
         style={{ gridColumn: "span 1 / span 1", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">
@@ -294,8 +310,12 @@ const BetSlip = ({
             price: 1.98,
           })
         }
-        className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          border-transparent"
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+          ${
+            suit === "H" || suit === "D"
+              ? "border-stakeGreen"
+              : "border-transparent"
+          }`}
         style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-red">
@@ -312,6 +332,7 @@ const BetSlip = ({
           stakeState={stakeState}
         />
       </div>
+
       <div
         onClick={() =>
           handleStakeChange({
@@ -320,8 +341,8 @@ const BetSlip = ({
             price: 2,
           })
         }
-        className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          border-transparent"
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+           ${isDown(rank) ? "border-stakeGreen" : "border-transparent"}`}
         style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-pink">
@@ -346,8 +367,12 @@ const BetSlip = ({
             price: 1.98,
           })
         }
-        className="relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          border-transparent"
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+            ${
+              suit === "C" || suit === "H"
+                ? "border-stakeGreen"
+                : "border-transparent"
+            }`}
         style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">

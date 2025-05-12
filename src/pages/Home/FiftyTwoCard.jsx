@@ -8,6 +8,8 @@ const FiftyTwoCard = ({
   styleIndex,
   setStyleIndex,
   showCardAnimation,
+  winCard,
+  totalWinAmount,
 }) => {
   return (
     <>
@@ -121,6 +123,8 @@ const FiftyTwoCard = ({
 
           {showCard && (
             <Card
+              totalWinAmount={totalWinAmount}
+              winCard={winCard}
               showCardAnimation={showCardAnimation}
               styleIndex={styleIndex}
               setStyleIndex={setStyleIndex}

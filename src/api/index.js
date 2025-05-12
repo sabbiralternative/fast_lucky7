@@ -92,4 +92,5 @@ export const Settings = {
   language: "",
   otpless: "",
   lobby: "",
+  baseUrl: "",
 };

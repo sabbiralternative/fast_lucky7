@@ -69,61 +69,10 @@ const Card = ({ styleIndex, setStyleIndex }) => {
     },
   ];
 
-  // const styles = [
-  //   {
-  //     position: "absolute",
-  //     transition: "all 0.5s ease",
-  //     transformStyle: "preserve-3d",
-  //     right: "0%",
-  //     top: "0%",
-  //     transform: "translateZ(62px) rotateY(0deg)",
-  //   },
-  //   {
-  //     position: "absolute",
-  //     transition: "all 0.5s ease",
-  //     transformStyle: "preserve-3d",
-  //     right: "0%",
-  //     top: "0%",
-  //     transform: "translateZ(62px) rotateY(-30deg)",
-  //   },
-  //   {
-  //     position: "absolute",
-  //     transition: "all 0.5s ease",
-  //     transformStyle: "preserve-3d",
-  //     right: "12%",
-  //     top: "15%",
-  //     transform: "translateZ(51px) rotateY(-60deg)",
-  //   },
-  //   {
-  //     position: "absolute",
-  //     transition: "all 0.5s ease",
-  //     transformStyle: "preserve-3d",
-  //     right: "24%",
-  //     top: "30%",
-  //     transform: "translateZ(51px) rotateY(-120deg)",
-  //   },
-  //   {
-  //     position: "absolute",
-  //     transition: "all 0.5s ease",
-  //     transformStyle: "preserve-3d",
-  //     right: "37%",
-  //     top: "45%",
-  //     transform: "translateZ(51px) rotateY(-180deg)",
-  //   },
-  //   {
-  //     position: "absolute",
-  //     transition: "all 0.5s ease",
-  //     transformStyle: "preserve-3d",
-  //     right: "40%",
-  //     top: "48%",
-  //     transform: "translateZ(51px) rotateY(-180deg)",
-  //   },
-  // ];
-
   return (
     <div
       className={`relative border-2 shadow-sm transition-all ease-in-out duration-200 h-24 lg:h-40 aspect-[5/7] rounded bg-white ${
-        styleIndex === 7 ? "border-stakeGreen" : ""
+        styleIndex === 1 ? "border-stakeGreen" : ""
       }`}
       style={{
         ...styles[styleIndex],

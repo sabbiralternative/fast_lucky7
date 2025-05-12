@@ -8,6 +8,7 @@ const Sidebar = ({
   initialState,
   handleDoubleStake,
   handleUndoStake,
+  isPlaceStake,
 }) => {
   const handleClear = () => {
     setStakeState(initialState);
@@ -50,7 +51,10 @@ const Sidebar = ({
         )}
 
         <div className="flex items-center justify-center w-full h-20 gap-6">
-          <button className="flex flex-col text-white/50 items-center justify-center gap-0.5 text-[10px] font-medium disabled:opacity-40">
+          <button
+            onClick={handleClick}
+            className="flex flex-col text-white/50 items-center justify-center gap-0.5 text-[10px] font-medium disabled:opacity-40"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -68,6 +72,7 @@ const Sidebar = ({
             SHUFFLE
           </button>
           <button
+            disabled={!isPlaceStake}
             onClick={handleUndoStake}
             className="flex flex-col text-white/50 items-center justify-center gap-0.5 text-[10px] font-medium disabled:opacity-50"
           >
@@ -89,6 +94,7 @@ const Sidebar = ({
           </button>
           <SelectChip />
           <button
+            disabled={!isPlaceStake}
             onClick={handleClear}
             className="flex flex-col text-white/50 items-center justify-center gap-0.5 text-[10px] font-medium disabled:opacity-50"
           >
@@ -109,6 +115,7 @@ const Sidebar = ({
             CLEAR
           </button>
           <button
+            disabled={!isPlaceStake}
             onClick={handleDoubleStake}
             className="flex flex-col text-white/50 items-center justify-center gap-0.5 text-[10px] font-medium disabled:opacity-50"
           >

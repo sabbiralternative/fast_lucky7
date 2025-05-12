@@ -45,11 +45,13 @@ const Home = () => {
 
   const handleClick = () => {
     if (styleIndex === 1) {
-      setShowCard(false);
+      setShowCard(true);
+      setTimeout(() => {
+        setShowCard(false);
+      }, 300);
       setStyleIndex(0);
     }
     playShuffleSound();
-
     setShowAnimationBtn(true);
     let steps = 0;
     const totalSteps = 6;
@@ -186,7 +188,7 @@ const Home = () => {
       return updatedState;
     });
   };
-
+  const isPlaceStake = Object.values(stakeState).find((item) => item?.show);
   return (
     <main className="flex flex-col items-center lg:h-screen bg-zinc-800">
       <div className="react-joyride" />
@@ -396,6 +398,7 @@ const Home = () => {
           </div>
         </div>
         <Sidebar
+          isPlaceStake={isPlaceStake}
           handleUndoStake={handleUndoStake}
           handleDoubleStake={handleDoubleStake}
           setStakeState={setStakeState}

@@ -1,9 +1,8 @@
-import { clickSound, playShuffleSound } from "../../utils/sound";
+import { clickSound } from "../../utils/sound";
 import SelectChip from "./SelectChip";
 
 const Sidebar = ({
   handleClick,
-  showAnimationBtn,
   setStakeState,
   initialState,
   handleDoubleStake,
@@ -14,15 +13,24 @@ const Sidebar = ({
   totalWinAmount,
   showTotalWinAmount,
   isAnimationEnd,
+  setWinCard,
+  setShowCard,
+  setStyleIndex,
+  loading,
+  showCard,
+  winCard,
 }) => {
   const handleClear = () => {
     setStakeState(initialState);
+    setWinCard({ card: null, suit: null, rank: null, rank_number: null });
+    setStyleIndex(0);
+    setShowCard(false);
     clickSound();
   };
   return (
     <div className="flex flex-col w-full max-w-md gap-2 p-2 mx-auto lg:h-full lg:overflow-y-auto">
       <div className="flex flex-col w-full lg:flex-col-reverse">
-        {showAnimationBtn ? (
+        {loading ? (
           <button
             id="step-placeBet"
             className="w-full p-3 font-medium text-black rounded bg-stakeGreen active:scale-[99%] disabled:opacity-50"
@@ -44,10 +52,9 @@ const Sidebar = ({
           </button>
         ) : (
           <button
-            disabled={!isPlaceStake}
+            disabled={!isPlaceStake || loading}
             onClick={() => {
-              handleClick(true);
-              playShuffleSound();
+              handleClick(false);
             }}
             id="step-placeBet"
             className="w-full p-3 font-medium text-black rounded bg-stakeGreen active:scale-[99%] disabled:opacity-50"
@@ -58,7 +65,7 @@ const Sidebar = ({
 
         <div className="flex items-center justify-center w-full h-20 gap-6">
           <button
-            onClick={() => handleClick(false)}
+            onClick={() => handleClick(true)}
             className="flex flex-col text-white/50 items-center justify-center gap-0.5 text-[10px] font-medium disabled:opacity-40"
           >
             <svg
@@ -100,7 +107,7 @@ const Sidebar = ({
           </button>
           <SelectChip />
           <button
-            disabled={!isPlaceStake}
+            disabled={!isPlaceStake && !winCard?.card && !showCard}
             onClick={handleClear}
             className="flex flex-col text-white/50 items-center justify-center gap-0.5 text-[10px] font-medium disabled:opacity-50"
           >

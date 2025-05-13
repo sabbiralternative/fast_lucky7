@@ -12,3 +12,12 @@ export const playShuffleSound = () => {
 export const playUndoSound = () => {
   return new Audio(`${Settings.baseUrl}/sound/undo.mp3`).play();
 };
+export const playWinSound = () => {
+  return new Audio(`${Settings.baseUrl}/sound/win.mp3`).play();
+};
+export const playCardSound = () => {
+  return new Audio(`${Settings.baseUrl}/sound/card.mp3`).play();
+};
+export const playCardBackSound = () => {
+  return new Audio(`${Settings.baseUrl}/sound/cardback.mp3`).play();
+};

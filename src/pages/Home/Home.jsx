@@ -6,7 +6,12 @@ import Sidebar from "./Sidebar";
 import { changeCardsProperty, fiftyTwoCard } from "../../static/fiftyTwoCard";
 import { useSelector } from "react-redux";
 import { useOrderMutation } from "../../redux/features/events/events";
-import { playShuffleSound } from "../../utils/sound";
+import {
+  playCardBackSound,
+  playCardSound,
+  playShuffleSound,
+  playWinSound,
+} from "../../utils/sound";
 import toast from "react-hot-toast";
 import { calculateTotalWin } from "../../utils";
 import { handleUndoStake } from "../../utils/handleUndoStake";
@@ -29,8 +34,9 @@ const Home = () => {
   const [totalWinAmount, setTotalWinAmount] = useState(0);
   const { stake } = useSelector((state) => state.global);
   const [cards, setCards] = useState(fiftyTwoCard);
-  const [showAnimationBtn, setShowAnimationBtn] = useState(false);
+
   const [isAnimationEnd, setIsAnimationEnd] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showCard, setShowCard] = useState(false);
   const initialState = {
     Even: { show: false, stake },
@@ -55,10 +61,10 @@ const Home = () => {
   });
 
   const handleClick = (shuffle) => {
+    setLoading(true);
     setIsAnimationEnd(false);
     setShowCardAnimation(true);
-    playShuffleSound();
-    setShowAnimationBtn(true);
+
     setWinCard({
       card: null,
       rank: null,
@@ -88,6 +94,11 @@ const Home = () => {
           );
 
           setTimeout(() => {
+            setTimeout(() => {
+              if (calculateWin > 0) {
+                playWinSound();
+              }
+            }, 1000);
             setShowTotalWinAmount(true);
             setTotalWinAmount(calculateWin);
             setMultiplier((calculateWin / totalPlaceBet).toFixed(2));
@@ -99,18 +110,6 @@ const Home = () => {
               rank: res?.rank,
               rank_number: res?.rank_number,
             });
-            // setStakeState((prev) => {
-            //   const updatedState = { ...prev };
-            //   Object.keys(updatedState).forEach((key) => {
-            //     if (updatedState[key].show) {
-            //       updatedState[key] = {
-            //         ...updatedState[key],
-            //         show: false,
-            //       };
-            //     }
-            //   });
-            //   return updatedState;
-            // });
           }, 2000);
         } else {
           toast.success(res?.error?.description[0]?.message);
@@ -120,6 +119,7 @@ const Home = () => {
     }
 
     if (styleIndex === 1) {
+      playCardBackSound();
       setShowCard(true);
       setTimeout(() => {
         setShowCard(false);
@@ -132,13 +132,21 @@ const Home = () => {
     const totalSteps = 6;
 
     const updateCards = (step) => {
+      if (step === 2) {
+        playShuffleSound();
+      }
+
       if (step === 6) {
+        if (!shuffle) {
+          playCardSound();
+        }
         setTimeout(() => {
           setIsAnimationEnd(true);
+          setLoading(false);
         }, 1000);
         setCards(fiftyTwoCard);
-        setShowAnimationBtn(false);
-        if (shuffle) {
+
+        if (!shuffle) {
           setTimeout(() => {
             setShowCard(true);
           }, 100);
@@ -384,6 +392,10 @@ const Home = () => {
           </div>
         </div>
         <Sidebar
+          loading={loading}
+          setStyleIndex={setStyleIndex}
+          setShowCard={setShowCard}
+          setWinCard={setWinCard}
           isAnimationEnd={isAnimationEnd}
           showTotalWinAmount={showTotalWinAmount}
           totalWinAmount={totalWinAmount}
@@ -401,8 +413,9 @@ const Home = () => {
           }
           setStakeState={setStakeState}
           initialState={initialState}
-          showAnimationBtn={showAnimationBtn}
           handleClick={handleClick}
+          showCard={showCard}
+          winCard={winCard}
         />
       </div>
     </main>

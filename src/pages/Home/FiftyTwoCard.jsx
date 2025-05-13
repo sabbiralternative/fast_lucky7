@@ -11,6 +11,7 @@ const FiftyTwoCard = ({
   winCard,
   totalWinAmount,
   multiplier,
+  isAnimationEnd,
 }) => {
   return (
     <>
@@ -124,6 +125,7 @@ const FiftyTwoCard = ({
 
           {showCard && (
             <Card
+              isAnimationEnd={isAnimationEnd}
               multiplier={multiplier}
               totalWinAmount={totalWinAmount}
               winCard={winCard}

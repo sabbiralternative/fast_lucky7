@@ -99,18 +99,18 @@ const Home = () => {
               rank: res?.rank,
               rank_number: res?.rank_number,
             });
-            setStakeState((prev) => {
-              const updatedState = { ...prev };
-              Object.keys(updatedState).forEach((key) => {
-                if (updatedState[key].show) {
-                  updatedState[key] = {
-                    ...updatedState[key],
-                    show: false,
-                  };
-                }
-              });
-              return updatedState;
-            });
+            // setStakeState((prev) => {
+            //   const updatedState = { ...prev };
+            //   Object.keys(updatedState).forEach((key) => {
+            //     if (updatedState[key].show) {
+            //       updatedState[key] = {
+            //         ...updatedState[key],
+            //         show: false,
+            //       };
+            //     }
+            //   });
+            //   return updatedState;
+            // });
           }, 2000);
         } else {
           toast.success(res?.error?.description[0]?.message);
@@ -123,7 +123,7 @@ const Home = () => {
       setShowCard(true);
       setTimeout(() => {
         setShowCard(false);
-      }, 300);
+      }, 200);
 
       setStyleIndex(0);
     }
@@ -133,11 +133,15 @@ const Home = () => {
 
     const updateCards = (step) => {
       if (step === 6) {
-        setIsAnimationEnd(true);
+        setTimeout(() => {
+          setIsAnimationEnd(true);
+        }, 1000);
         setCards(fiftyTwoCard);
         setShowAnimationBtn(false);
         if (shuffle) {
-          setShowCard(true);
+          setTimeout(() => {
+            setShowCard(true);
+          }, 100);
         }
       } else {
         const newCards = cards.map((card, i) => {
@@ -282,6 +286,7 @@ const Home = () => {
             <div className="absolute top-1 left-1 rounded overflow-clip grid grid-cols-2 gap-0.5 text-[9px] lg:text-xs text-white/30" />
 
             <FiftyTwoCard
+              isAnimationEnd={isAnimationEnd}
               multiplier={multiplier}
               totalWinAmount={totalWinAmount}
               winCard={winCard}

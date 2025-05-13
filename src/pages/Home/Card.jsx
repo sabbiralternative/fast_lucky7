@@ -10,6 +10,7 @@ const Card = ({
   showCardAnimation,
   winCard,
   totalWinAmount,
+  multiplier,
 }) => {
   const cardNumber = winCard?.card && parseFloat(winCard?.card?.substring(1));
 
@@ -81,10 +82,19 @@ const Card = ({
           7
         </span>
       )}
-      <div className="flex flex-col items-center justify-center gap-1 px-2 py-1 border-2 rounded border-stakeGreen bg-zinc-800 animate__faster animate__zoomIn animate__animated ">
+
+      <div
+        style={{
+          position: "absolute",
+          transform: "translateY(-105%) translateZ(52px) translateX(50%)",
+          right: "55%",
+          top: "45%",
+        }}
+        className="flex flex-col items-center justify-center gap-1 px-2 py-1 border-2 rounded border-stakeGreen bg-zinc-800 animate__faster animate__zoomIn animate__animated z-50"
+      >
         <div className="flex flex-col items-center justify-center font-mono">
           <span className="text-xl font-semibold tracking-tighter text-stakeGreen md:text-3xl">
-            x1.37
+            x{multiplier}
           </span>
           <div className="w-full h-0.5 bg-white/5" />
           <span className="text-sm font-semibold tracking-tighter text-stakeGreen/80 md:text-xl">
@@ -92,6 +102,7 @@ const Card = ({
           </span>
         </div>
       </div>
+
       <div
         className={`relative border-2 shadow-sm transition-all ease-in-out duration-200 h-24 lg:h-40 aspect-[5/7] rounded bg-white ${
           styleIndex === 1 ? "border-stakeGreen" : ""

@@ -21,50 +21,91 @@ export function isDown(number) {
 }
 export function isSeven(number) {
   if (typeof number === "number") {
-    return number < 7;
+    return number === 7;
   }
 }
 
-export const calculateTotalWin = (r, suit, payload) => {
+export const calculateTotalWin = (r, suit, rankNumber, payload) => {
   const rank = parseFloat(r);
-  console.log(r, suit, payload);
+  const rank_number = parseFloat(rankNumber);
+  // console.log({ r }, { suit }, { rankNumber }, payload);
+  // console.log(isUp(rank_number));
+
   let totalWin = 0;
   if (isEven(rank)) {
     const even = payload?.find((p) => p.runner_name === "Even");
-    console.log(even);
-    totalWin += even?.price * even?.stake;
-  } else if (isOdd(rank)) {
+    if (even) {
+      totalWin += even?.price * even?.stake;
+    }
+  }
+
+  if (isOdd(rank)) {
     const odd = payload?.find((p) => p.runner_name === "Odd");
-    totalWin += odd?.price * odd?.stake;
-  } else if (isUp(rank)) {
+    if (odd) {
+      totalWin += odd?.price * odd?.stake;
+    }
+  }
+
+  if (isUp(rank_number)) {
     const up = payload?.find((p) => p.runner_name === "Up");
-    totalWin += up?.price * up?.stake;
-  } else if (isDown(rank)) {
+
+    if (up) {
+      totalWin += up?.price * up?.stake;
+    }
+  }
+
+  if (isDown(rank_number)) {
     const down = payload?.find((p) => p.runner_name === "Down");
-    totalWin += down?.price * down?.stake;
-  } else if (isSeven(rank)) {
+    if (down) {
+      totalWin += down?.price * down?.stake;
+    }
+  }
+
+  if (isSeven(rank_number)) {
     const seven = payload?.find((p) => p.runner_name === "Seven");
-    totalWin += seven?.price * seven?.stake;
-  } else if (suit === "D") {
+    if (seven) {
+      totalWin += seven?.price * seven?.stake;
+    }
+  }
+
+  if (suit === "D") {
     const diamond = payload?.find((p) => p.runner_name === "Diamond");
-    totalWin += diamond?.price * diamond?.stake;
-  } else if (suit === "H") {
+    if (diamond) {
+      totalWin += diamond?.price * diamond?.stake;
+    }
+  }
+
+  if (suit === "H") {
     const heart = payload?.find((p) => p.runner_name === "Heart");
-    totalWin += heart?.price * heart?.stake;
-  } else if (suit === "S") {
+    if (heart) {
+      totalWin += heart?.price * heart?.stake;
+    }
+  }
+
+  if (suit === "S") {
     const spade = payload?.find((p) => p.runner_name === "Spade");
-    totalWin += spade?.price * spade?.stake;
-  } else if (suit === "C") {
+    if (spade) {
+      totalWin += spade?.price * spade?.stake;
+    }
+  }
+
+  if (suit === "C") {
     const club = payload?.find((p) => p.runner_name === "Club");
-    totalWin += club?.price * club?.stake;
+    if (club) {
+      totalWin += club?.price * club?.stake;
+    }
   }
   if (suit === "H" || suit === "D") {
-    const club = payload?.find((p) => p.runner_name === "Red");
-    totalWin += club?.price * club?.stake;
+    const red = payload?.find((p) => p.runner_name === "Red");
+    if (red) {
+      totalWin += red?.price * red?.stake;
+    }
   }
-  if (suit === "H" || suit === "C") {
-    const club = payload?.find((p) => p.runner_name === "Black");
-    totalWin += club?.price * club?.stake;
+  if (suit === "S" || suit === "C") {
+    const black = payload?.find((p) => p.runner_name === "Black");
+    if (black) {
+      totalWin += black?.price * black?.stake;
+    }
   }
 
   return totalWin;

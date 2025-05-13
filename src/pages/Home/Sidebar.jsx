@@ -10,6 +10,10 @@ const Sidebar = ({
   handleUndoStake,
   isPlaceStake,
   totalPlaceBet,
+  isRepeatTheBet,
+  totalWinAmount,
+  showTotalWinAmount,
+  isAnimationEnd,
 }) => {
   const handleClear = () => {
     setStakeState(initialState);
@@ -40,6 +44,7 @@ const Sidebar = ({
           </button>
         ) : (
           <button
+            disabled={!isPlaceStake}
             onClick={() => {
               handleClick(true);
               playShuffleSound();
@@ -116,7 +121,7 @@ const Sidebar = ({
             CLEAR
           </button>
           <button
-            disabled={!isPlaceStake}
+            disabled={!isPlaceStake && !isRepeatTheBet}
             onClick={handleDoubleStake}
             className="flex flex-col text-white/50 items-center justify-center gap-0.5 text-[10px] font-medium disabled:opacity-50"
           >
@@ -139,12 +144,19 @@ const Sidebar = ({
                 clipRule="evenodd"
               />
             </svg>
-            DOUBLE
+            {isRepeatTheBet ? "Repeat" : "DOUBLE"}
           </button>
         </div>
         <div className="flex items-center justify-between w-full px-4 py-2 mb-2 text-sm font-medium rounded bg-black/20">
-          <span className="text-white/80">Total Bet</span>
-          <span className="font-mono text-yellow">{totalPlaceBet}</span>
+          <span className="text-white/80">
+            {" "}
+            {showTotalWinAmount && isAnimationEnd ? "Total Win" : "Total Bet"}
+          </span>
+          <span className="font-mono text-yellow">
+            {showTotalWinAmount && isAnimationEnd
+              ? totalWinAmount
+              : totalPlaceBet}
+          </span>
         </div>
         {/* <div
           className="flex flex-col items-center w-full gap-2 lg:flex-col-reverse"

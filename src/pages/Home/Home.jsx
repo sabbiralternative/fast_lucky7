@@ -6,13 +6,11 @@ import Sidebar from "./Sidebar";
 import { changeCardsProperty, fiftyTwoCard } from "../../static/fiftyTwoCard";
 import { useSelector } from "react-redux";
 import { useOrderMutation } from "../../redux/features/events/events";
-import {
-  playShuffleSound,
-  playStakeChangeSound,
-  playUndoSound,
-} from "../../utils/sound";
+import { playShuffleSound } from "../../utils/sound";
 import toast from "react-hot-toast";
 import { calculateTotalWin } from "../../utils";
+import { handleUndoStake } from "../../utils/handleUndoStake";
+import { handleDoubleStake } from "../../utils/handleDoubleStake";
 
 const Home = () => {
   const [addOrder] = useOrderMutation();
@@ -24,11 +22,15 @@ const Home = () => {
     card: null,
     suit: null,
     rank: null,
+    rank_number: null,
   });
+  const [multiplier, setMultiplier] = useState(null);
+  const [showTotalWinAmount, setShowTotalWinAmount] = useState(false);
   const [totalWinAmount, setTotalWinAmount] = useState(0);
   const { stake } = useSelector((state) => state.global);
   const [cards, setCards] = useState(fiftyTwoCard);
   const [showAnimationBtn, setShowAnimationBtn] = useState(false);
+  const [isAnimationEnd, setIsAnimationEnd] = useState(false);
   const [showCard, setShowCard] = useState(false);
   const initialState = {
     Even: { show: false, stake },
@@ -45,11 +47,23 @@ const Home = () => {
   };
   const [stakeState, setStakeState] = useState(initialState);
 
+  let totalPlaceBet = 0;
+  Object.values(stakeState).forEach((item) => {
+    if (item?.show) {
+      totalPlaceBet += item?.stake;
+    }
+  });
+
   const handleClick = (shuffle) => {
+    setIsAnimationEnd(false);
+    setShowCardAnimation(true);
+    playShuffleSound();
+    setShowAnimationBtn(true);
     setWinCard({
       card: null,
       rank: null,
       suit: null,
+      rank_number: null,
     });
     const filterPlacedBet = Object.values(stakeState).filter((bet) => bet.show);
     let payload = filterPlacedBet.map((bet) => ({
@@ -66,58 +80,60 @@ const Home = () => {
         const res = await addOrder(payload).unwrap();
 
         if (res?.success) {
-          const calculateWin = calculateTotalWin(res?.rank, res?.suit, payload);
-          setTotalWinAmount(calculateWin);
-          payload = [];
+          const calculateWin = calculateTotalWin(
+            res?.rank,
+            res?.suit,
+            res?.rank_number,
+            payload
+          );
 
-          setWinCard({
-            card: res?.card,
-            suit: res?.suit,
-            rank: res?.rank,
-          });
+          setTimeout(() => {
+            setShowTotalWinAmount(true);
+            setTotalWinAmount(calculateWin);
+            setMultiplier((calculateWin / totalPlaceBet).toFixed(2));
+            payload = [];
 
-          let totalBets = [];
-
-          for (let bet of filterPlacedBet) {
-            totalBets.push({
-              eventId: 30001,
-              eventName: "Fast Lucky 7A",
-              isback: 0,
-              price: bet?.price,
-              runner_name: bet?.runner_name,
-              stake: bet?.stake,
+            setWinCard({
+              card: res?.card,
+              suit: res?.suit,
+              rank: res?.rank,
+              rank_number: res?.rank_number,
             });
-          }
-          localStorage.setItem("totalBetPlace", JSON.stringify(totalBets));
-
-          setStakeState(initialState);
+            setStakeState((prev) => {
+              const updatedState = { ...prev };
+              Object.keys(updatedState).forEach((key) => {
+                if (updatedState[key].show) {
+                  updatedState[key] = {
+                    ...updatedState[key],
+                    show: false,
+                  };
+                }
+              });
+              return updatedState;
+            });
+          }, 2000);
         } else {
           toast.success(res?.error?.description[0]?.message);
         }
       };
       handleOrder();
     }
-    if (shuffle) {
-      setShowCardAnimation(true);
-    } else {
-      setShowAnimationBtn(false);
-    }
-    if (styleIndex === 1 && shuffle) {
-      if (shuffle) {
-        setShowCard(true);
-        setTimeout(() => {
-          setShowCard(false);
-        }, 300);
-      }
+
+    if (styleIndex === 1) {
+      setShowCard(true);
+      setTimeout(() => {
+        setShowCard(false);
+      }, 300);
+
       setStyleIndex(0);
     }
-    playShuffleSound();
-    setShowAnimationBtn(true);
+
     let steps = 0;
     const totalSteps = 6;
 
     const updateCards = (step) => {
       if (step === 6) {
+        setIsAnimationEnd(true);
         setCards(fiftyTwoCard);
         setShowAnimationBtn(false);
         if (shuffle) {
@@ -146,118 +162,11 @@ const Home = () => {
     }, 300);
   };
 
-  const handleUndoStake = () => {
-    playUndoSound();
-    setStakeState((prev) => {
-      const updatedState = { ...prev };
-      const prevValues = Object.entries(prev);
-      const isPlacedDouble = Object.values(stakeState).filter(
-        (item) => item?.double
-      );
-
-      if (isPlacedDouble?.length > 0) {
-        Object.keys(updatedState).forEach((key) => {
-          if (updatedState[key].show) {
-            updatedState[key] = {
-              ...updatedState[key],
-              stake: updatedState[key].stake / 2,
-              double: updatedState[key].double - 1,
-            };
-          }
-        });
-
-        return updatedState;
-      } else {
-        const maxSerialObject = prevValues.reduce(
-          (maxObj, [key, currentObj]) => {
-            if (currentObj.serial > (maxObj?.serial || 0)) {
-              return { key, obj: currentObj };
-            }
-            return maxObj;
-          },
-          {}
-        );
-
-        if (maxSerialObject.obj) {
-          const updatedObj = {
-            ...maxSerialObject.obj,
-            undo: [...maxSerialObject.obj.undo],
-          };
-
-          if (
-            updatedObj.undo.length > 0 &&
-            updatedObj.stake > updatedObj.undo[updatedObj.undo.length - 1]
-          ) {
-            updatedObj.stake -= updatedObj.undo.pop();
-          } else {
-            updatedObj.show = false;
-            delete updatedObj.serial;
-          }
-
-          return {
-            ...prev,
-            [maxSerialObject.key]: updatedObj,
-          };
-        }
-
-        return prev;
-      }
-    });
-  };
-  const handleDoubleStake = () => {
-    setDouble(true);
-    playStakeChangeSound();
-    setStakeState((prevState) => {
-      const updatedState = { ...prevState };
-      const maxSerial = Math.max(
-        0,
-        ...Object.values(updatedState)
-          .map((item) => item.serial)
-          .filter((serial) => serial !== undefined)
-      );
-
-      const oddNames = [];
-
-      Object.keys(updatedState).forEach((key) => {
-        if (updatedState[key].show) {
-          oddNames.push(key);
-        }
-      });
-      setAnimation(oddNames);
-
-      setTimeout(() => {
-        Object.keys(updatedState).forEach((key) => {
-          if (updatedState[key].show) {
-            const currentStake = updatedState[key].stake;
-            updatedState[key] = {
-              ...updatedState[key],
-              undo: [...updatedState[key].undo, currentStake],
-              serial: updatedState[key]?.serial
-                ? updatedState[key]?.serial
-                : maxSerial + 1,
-              stake: updatedState[key].stake * 2,
-              double: updatedState[key].double
-                ? updatedState[key].double + 1
-                : 1,
-            };
-          }
-        });
-
-        setDouble(false);
-        setAnimation([]);
-      }, 500);
-
-      return updatedState;
-    });
-  };
   const isPlaceStake = Object.values(stakeState).find((item) => item?.show);
 
-  let totalPlaceBet = 0;
-  Object.values(stakeState).forEach((item) => {
-    if (item?.show) {
-      totalPlaceBet += item?.stake;
-    }
-  });
+  const isRepeatTheBet = Object.values(stakeState).find(
+    (item) => item?.runner_name && item?.show === false
+  );
 
   return (
     <main className="flex flex-col items-center lg:h-screen bg-zinc-800">
@@ -373,6 +282,7 @@ const Home = () => {
             <div className="absolute top-1 left-1 rounded overflow-clip grid grid-cols-2 gap-0.5 text-[9px] lg:text-xs text-white/30" />
 
             <FiftyTwoCard
+              multiplier={multiplier}
               totalWinAmount={totalWinAmount}
               winCard={winCard}
               showCardAnimation={showCardAnimation}
@@ -382,8 +292,10 @@ const Home = () => {
               cards={cards}
             />
             <BetSlip
+              setShowTotalWinAmount={setShowTotalWinAmount}
+              setIsAnimationEnd={setIsAnimationEnd}
+              isAnimationEnd={isAnimationEnd}
               winCard={winCard}
-              setWinCard={setWinCard}
               setAnimation={setAnimation}
               setStakeState={setStakeState}
               stakeState={stakeState}
@@ -467,10 +379,21 @@ const Home = () => {
           </div>
         </div>
         <Sidebar
+          isAnimationEnd={isAnimationEnd}
+          showTotalWinAmount={showTotalWinAmount}
+          totalWinAmount={totalWinAmount}
+          isRepeatTheBet={isRepeatTheBet}
           totalPlaceBet={totalPlaceBet}
           isPlaceStake={isPlaceStake}
-          handleUndoStake={handleUndoStake}
-          handleDoubleStake={handleDoubleStake}
+          handleUndoStake={() => handleUndoStake(setStakeState, stakeState)}
+          handleDoubleStake={() =>
+            handleDoubleStake(
+              isRepeatTheBet,
+              setDouble,
+              setStakeState,
+              setAnimation
+            )
+          }
           setStakeState={setStakeState}
           initialState={initialState}
           showAnimationBtn={showAnimationBtn}

@@ -5,25 +5,25 @@ import StakeAnimation from "./StakeAnimation";
 import { isDown, isEven, isOdd, isSeven, isUp } from "../../utils";
 
 const BetSlip = ({
+  setShowTotalWinAmount,
   setAnimation,
   setStakeState,
   stakeState,
   animation,
   double,
   winCard,
-  setWinCard,
+  setIsAnimationEnd,
+  isAnimationEnd,
 }) => {
   const rank = winCard?.rank && parseFloat(winCard?.rank);
+  const rank_number = winCard?.rank_number && parseFloat(winCard?.rank_number);
   const suit = winCard?.suit;
 
   const { stake } = useSelector((state) => state.global);
 
   const handleStakeChange = (payload) => {
-    setWinCard({
-      card: null,
-      suit: null,
-      rank: null,
-    });
+    setShowTotalWinAmount(false);
+    setIsAnimationEnd(false);
     playStakeChangeSound();
     const { key } = payload;
     setAnimation([key]);
@@ -98,7 +98,11 @@ const BetSlip = ({
           })
         }
         className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-            ${isEven(rank) ? "border-stakeGreen" : "border-transparent"}`}
+            ${
+              isEven(rank) && isAnimationEnd
+                ? "border-stakeGreen"
+                : "border-transparent"
+            }`}
         style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">
@@ -124,7 +128,11 @@ const BetSlip = ({
           })
         }
         className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          ${isUp(rank) ? "border-stakeGreen" : "border-transparent"}`}
+          ${
+            isUp(rank_number) && isAnimationEnd
+              ? "border-stakeGreen"
+              : "border-transparent"
+          }`}
         style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-green">
@@ -150,7 +158,11 @@ const BetSlip = ({
           })
         }
         className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-         ${isOdd(rank) ? "border-stakeGreen" : "border-transparent"}`}
+         ${
+           isOdd(rank) && isAnimationEnd
+             ? "border-stakeGreen"
+             : "border-transparent"
+         }`}
         style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">
@@ -177,7 +189,11 @@ const BetSlip = ({
           })
         }
         className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-           ${suit === "D" ? "border-stakeGreen" : "border-transparent"}`}
+           ${
+             suit === "D" && isAnimationEnd
+               ? "border-stakeGreen"
+               : "border-transparent"
+           }`}
         style={{ gridColumn: "span 1 / span 1", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-red">
@@ -203,7 +219,11 @@ const BetSlip = ({
           })
         }
         className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          ${suit === "H" ? "border-stakeGreen" : "border-transparent"}`}
+          ${
+            suit === "H" && isAnimationEnd
+              ? "border-stakeGreen"
+              : "border-transparent"
+          }`}
         style={{ gridColumn: "span 1 / span 1", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-red">
@@ -230,7 +250,11 @@ const BetSlip = ({
           })
         }
         className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-          ${isSeven(rank) ? "border-stakeGreen" : "border-transparent"}`}
+          ${
+            isSeven(rank_number) && isAnimationEnd
+              ? "border-stakeGreen"
+              : "border-transparent"
+          }`}
         style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-blue">
@@ -257,7 +281,11 @@ const BetSlip = ({
           })
         }
         className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-           ${suit === "S" ? "border-stakeGreen" : "border-transparent"}`}
+           ${
+             suit === "S" && isAnimationEnd
+               ? "border-stakeGreen"
+               : "border-transparent"
+           }`}
         style={{ gridColumn: "span 1 / span 1", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">
@@ -284,7 +312,9 @@ const BetSlip = ({
         }
         className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
           border-transparent ${
-            suit === "C" ? "border-stakeGreen" : "border-transparent"
+            suit === "C" && isAnimationEnd
+              ? "border-stakeGreen"
+              : "border-transparent"
           }`}
         style={{ gridColumn: "span 1 / span 1", pointerEvents: "auto" }}
       >
@@ -312,7 +342,7 @@ const BetSlip = ({
         }
         className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
           ${
-            suit === "H" || suit === "D"
+            (suit === "H" && isAnimationEnd) || (suit === "D" && isAnimationEnd)
               ? "border-stakeGreen"
               : "border-transparent"
           }`}
@@ -342,7 +372,11 @@ const BetSlip = ({
           })
         }
         className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
-           ${isDown(rank) ? "border-stakeGreen" : "border-transparent"}`}
+           ${
+             isDown(rank_number) && isAnimationEnd
+               ? "border-stakeGreen"
+               : "border-transparent"
+           }`}
         style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-pink">
@@ -354,7 +388,7 @@ const BetSlip = ({
         <StakeAnimation
           animation={animation}
           double={double}
-          runner={"Relative"}
+          runner={"Down"}
           stake={stake}
           stakeState={stakeState}
         />
@@ -369,7 +403,8 @@ const BetSlip = ({
         }
         className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
             ${
-              suit === "C" || suit === "H"
+              (suit === "C" && isAnimationEnd) ||
+              (suit === "S" && isAnimationEnd)
                 ? "border-stakeGreen"
                 : "border-transparent"
             }`}

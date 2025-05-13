@@ -7,6 +7,7 @@ import { changeCardsProperty, fiftyTwoCard } from "../../static/fiftyTwoCard";
 import { useSelector } from "react-redux";
 import { useOrderMutation } from "../../redux/features/events/events";
 import {
+  clickSound,
   playCardBackSound,
   playCardSound,
   playShuffleSound,
@@ -71,6 +72,7 @@ const Home = () => {
       suit: null,
       rank_number: null,
     });
+
     const filterPlacedBet = Object.values(stakeState).filter((bet) => bet.show);
     let payload = filterPlacedBet.map((bet) => ({
       eventId: 30001,
@@ -179,6 +181,60 @@ const Home = () => {
   const isRepeatTheBet = Object.values(stakeState).find(
     (item) => item?.runner_name && item?.show === false
   );
+
+  const handleClear = () => {
+    setWinCard({
+      card: null,
+      rank: null,
+      suit: null,
+      rank_number: null,
+    });
+
+    if (styleIndex === 1) {
+      playCardBackSound();
+      setStyleIndex(0);
+      setShowCard(true);
+      setTimeout(() => {
+        setShowCard(false);
+        setStakeState(initialState);
+      }, 200);
+    } else {
+      clickSound();
+      setStakeState(initialState);
+    }
+
+    let steps = 0;
+    const totalSteps = 6;
+
+    const updateCards = (step) => {
+      if (step === 2) {
+        playShuffleSound();
+      }
+
+      if (step === 6) {
+        setCards(fiftyTwoCard);
+      } else {
+        const newCards = cards.map((card, i) => {
+          return {
+            ...card,
+            right: changeCardsProperty[i + 1][step]?.right,
+            translateZ: changeCardsProperty[i + 1][step]?.translateZ,
+            delay: changeCardsProperty[i + 1][step]?.delay,
+          };
+        });
+        setCards(newCards);
+      }
+    };
+
+    const interval = setInterval(() => {
+      if (steps <= totalSteps) {
+        updateCards(steps);
+        steps++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 300);
+  };
 
   return (
     <main className="flex flex-col items-center lg:h-screen bg-zinc-800">
@@ -416,6 +472,7 @@ const Home = () => {
           handleClick={handleClick}
           showCard={showCard}
           winCard={winCard}
+          handleClear={handleClear}
         />
       </div>
     </main>

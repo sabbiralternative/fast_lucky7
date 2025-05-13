@@ -1,10 +1,7 @@
-import { clickSound } from "../../utils/sound";
 import SelectChip from "./SelectChip";
 
 const Sidebar = ({
   handleClick,
-  setStakeState,
-  initialState,
   handleDoubleStake,
   handleUndoStake,
   isPlaceStake,
@@ -13,20 +10,11 @@ const Sidebar = ({
   totalWinAmount,
   showTotalWinAmount,
   isAnimationEnd,
-  setWinCard,
-  setShowCard,
-  setStyleIndex,
   loading,
   showCard,
   winCard,
+  handleClear,
 }) => {
-  const handleClear = () => {
-    setStakeState(initialState);
-    setWinCard({ card: null, suit: null, rank: null, rank_number: null });
-    setStyleIndex(0);
-    setShowCard(false);
-    clickSound();
-  };
   return (
     <div className="flex flex-col w-full max-w-md gap-2 p-2 mx-auto lg:h-full lg:overflow-y-auto">
       <div className="flex flex-col w-full lg:flex-col-reverse">

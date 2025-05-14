@@ -64,9 +64,9 @@ const Home = () => {
   const handleClick = (shuffle) => {
     if (!shuffle) {
       setLoading(true);
+      setIsAnimationEnd(false);
     }
 
-    setIsAnimationEnd(false);
     setShowCardAnimation(true);
 
     setWinCard({
@@ -146,7 +146,9 @@ const Home = () => {
           playCardSound();
         }
         setTimeout(() => {
-          setIsAnimationEnd(true);
+          if (!shuffle) {
+            setIsAnimationEnd(true);
+          }
           setLoading(false);
         }, 1000);
         setCards(fiftyTwoCard);

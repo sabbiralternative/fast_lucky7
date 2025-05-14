@@ -62,7 +62,10 @@ const Home = () => {
   });
 
   const handleClick = (shuffle) => {
-    setLoading(true);
+    if (!shuffle) {
+      setLoading(true);
+    }
+
     setIsAnimationEnd(false);
     setShowCardAnimation(true);
 
@@ -83,7 +86,7 @@ const Home = () => {
       stake: bet?.stake,
     }));
 
-    if (payload?.length > 0) {
+    if (payload?.length > 0 && !shuffle) {
       const handleOrder = async () => {
         const res = await addOrder(payload).unwrap();
 

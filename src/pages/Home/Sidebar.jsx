@@ -73,7 +73,7 @@ const Sidebar = ({
             SHUFFLE
           </button>
           <button
-            disabled={!isPlaceStake}
+            disabled={!isPlaceStake || showTotalWinAmount || loading}
             onClick={handleUndoStake}
             className="flex flex-col text-white/50 items-center justify-center gap-0.5 text-[10px] font-medium disabled:opacity-50"
           >

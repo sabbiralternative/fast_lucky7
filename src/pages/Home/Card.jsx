@@ -7,30 +7,32 @@ import Heart from "./Card/Heart";
 const Card = ({
   styleIndex,
   setStyleIndex,
-  showCardAnimation,
   winCard,
   totalWinAmount,
   multiplier,
   isAnimationEnd,
+  isBetFast,
+  shuffle,
+  clear,
 }) => {
   const cardNumber = winCard?.card && parseFloat(winCard?.card?.substring(1));
 
   useEffect(() => {
-    if (styleIndex <= 0 && showCardAnimation) {
+    if (styleIndex <= 0) {
       const timer = setTimeout(() => {
         setStyleIndex((prev) => prev + 1);
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [styleIndex, setStyleIndex, showCardAnimation]);
+  }, [styleIndex, setStyleIndex]);
 
   const styles = [
     {
       position: "absolute",
       // transition: "all 0.5s ease",
       transformStyle: "preserve-3d",
-      right: "0%",
-      top: "0%",
+      right: isBetFast && !shuffle && !clear ? "40%:" : "0%",
+      top: isBetFast && !shuffle && !clear ? "48%:" : "0%",
       transform: "translateZ(51px) rotateY(0deg)",
     },
 

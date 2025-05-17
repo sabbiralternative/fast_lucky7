@@ -14,6 +14,7 @@ const Sidebar = ({
   showCard,
   winCard,
   handleClear,
+  handleShuffle,
 }) => {
   return (
     <div className="flex flex-col w-full max-w-md gap-2 p-2 mx-auto lg:h-full lg:overflow-y-auto">
@@ -42,7 +43,7 @@ const Sidebar = ({
           <button
             disabled={!isPlaceStake || loading}
             onClick={() => {
-              handleClick(false);
+              handleClick();
             }}
             id="step-placeBet"
             className="w-full p-3 font-medium text-black rounded bg-stakeGreen active:scale-[99%] disabled:opacity-50"
@@ -53,7 +54,7 @@ const Sidebar = ({
 
         <div className="flex items-center justify-center w-full h-20 gap-6">
           <button
-            onClick={() => handleClick(true)}
+            onClick={() => handleShuffle()}
             className="flex flex-col text-white/50 items-center justify-center gap-0.5 text-[10px] font-medium disabled:opacity-40"
           >
             <svg

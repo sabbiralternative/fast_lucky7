@@ -7,6 +7,8 @@ import images from "../assets/images";
 export const ApiContext = createContext(null);
 
 const ApiProvider = ({ children }) => {
+  const [totalWinAmount, setTotalWinAmount] = useState(0);
+  const [showTotalWin, setShowTotalWin] = useState(false);
   const [noticeLoaded, setNoticeLoaded] = useState(false);
   const [logo, setLogo] = useState("");
   const baseUrl = notice?.result?.settings?.baseUrl;
@@ -60,13 +62,23 @@ const ApiProvider = ({ children }) => {
     return;
   }
 
-  const stateInfo = { logo };
+  const stateInfo = {
+    logo,
+    totalWinAmount,
+    setTotalWinAmount,
+    showTotalWin,
+    setShowTotalWin,
+  };
   return (
     <ApiContext.Provider value={stateInfo}>{children}</ApiContext.Provider>
   );
 };
 
 export const useLogo = () => {
+  const context = useContext(ApiContext);
+  return context;
+};
+export const useStateContext = () => {
   const context = useContext(ApiContext);
   return context;
 };

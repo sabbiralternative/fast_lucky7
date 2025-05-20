@@ -1,12 +1,25 @@
 import { useSelector } from "react-redux";
 import { Settings } from "../../api";
+import { useStateContext } from "../../context/ApiProvider";
+import { useEffect } from "react";
 
 const Header = () => {
+  const { totalWinAmount, showTotalWin, setShowTotalWin } = useStateContext();
   const { balance, username, token } = useSelector((state) => state.auth);
   const handleOpenLobby = () => {
     const url = `${Settings.lobby}/${token}`;
     window.location.href = url;
   };
+
+  useEffect(() => {
+    if (showTotalWin) {
+      const timeOut = setTimeout(() => {
+        setShowTotalWin(false);
+      }, 1000);
+      return () => clearTimeout(timeOut);
+    }
+  }, [setShowTotalWin, showTotalWin]);
+
   return (
     <div className="flex items-center justify-between w-full p-2 text-white shadow-xl bg-black/10">
       <div
@@ -115,6 +128,19 @@ const Header = () => {
             <div id="balanceAmountContainer" className="relative font-mono">
               <div className="font-medium">
                 <span>₹{balance}</span>
+                <div>
+                  <div
+                    className={`absolute right-0 z-50 text-sm font-semibold text-green-500  -bottom-6 ${
+                      showTotalWin && totalWinAmount
+                        ? "animate__animated animate__fadeOutUp animate__slow"
+                        : "animate__animated animate__fadeOutDown animate__slow"
+                    }`}
+                  >
+                    {totalWinAmount && showTotalWin
+                      ? `+${totalWinAmount}`
+                      : null}
+                  </div>
+                </div>
               </div>
             </div>
           </span>

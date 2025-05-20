@@ -10,7 +10,7 @@ const Header = () => {
     const url = `${Settings.lobby}/${token}`;
     window.location.href = url;
   };
-
+  /* Close win amount */
   useEffect(() => {
     if (showTotalWin) {
       const timeOut = setTimeout(() => {

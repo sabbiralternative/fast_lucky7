@@ -22,10 +22,13 @@ export const authSlice = createSlice({
       state.username = null;
       state.balance = null;
     },
+    setBalance: (state, { payload }) => {
+      state.balance = payload;
+    },
   },
 });
 
-export const { logout, setUser } = authSlice.actions;
+export const { logout, setUser, setBalance } = authSlice.actions;
 export default authSlice.reducer;
 export const userToken = (state) => state.auth.token;
 export const currentUser = (state) => state.auth.user;

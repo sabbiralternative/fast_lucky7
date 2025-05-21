@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BetSlip from "./BetSlip";
 import FiftyTwoCard from "./FiftyTwoCard";
 import Header from "./Header";
@@ -20,6 +20,9 @@ import { handleDoubleStake } from "../../utils/handleDoubleStake";
 import { useStateContext } from "../../context/ApiProvider";
 
 const Home = () => {
+  const storedBetHistory = localStorage.getItem("betHistory");
+  const betHistory = storedBetHistory ? JSON.parse(storedBetHistory) : [];
+  const [history, setHistory] = useState([]);
   const [shuffle, setShuffle] = useState(false);
   const [clear, setClear] = useState(false);
   const [addOrder] = useOrderMutation();
@@ -146,6 +149,25 @@ const Home = () => {
     const res = await addOrder(payload).unwrap();
 
     if (res?.success) {
+      const historyObj = {
+        card: res?.card,
+        client_seed: res?.client_seed,
+        rank: res?.rank,
+        rank_number: res?.rank_number,
+        round_id: res?.round_id,
+        round_time: res?.round_time,
+        server_seed: res?.server_seed,
+        suit: res?.suit,
+        wallet: res?.wallet,
+        winner: res?.winner,
+      };
+      let betHistory = [];
+
+      const storedBetHistory = localStorage.getItem("betHistory");
+      if (storedBetHistory) {
+        betHistory = JSON.parse(storedBetHistory);
+      }
+
       const calculateWin = calculateTotalWin(
         res?.rank,
         res?.suit,
@@ -158,12 +180,24 @@ const Home = () => {
           setTimeout(
             () => {
               if (calculateWin > 0) {
+                betHistory.push({
+                  ...historyObj,
+                  result: "win",
+                });
                 setShowTotalWin(true);
                 playWinSound();
+              } else {
+                betHistory.push({
+                  ...historyObj,
+                  result: "loss",
+                });
               }
+              localStorage.setItem("betHistory", JSON.stringify(betHistory));
+              setHistory(betHistory);
             },
             isBetFast ? 500 : 1000
           );
+
           setShowTotalWinAmount(true);
           setTotalWinAmount(calculateWin);
           setMultiplier((calculateWin / totalPlaceBet).toFixed(2));
@@ -178,6 +212,7 @@ const Home = () => {
         },
         isBetFast ? 500 : 2000
       );
+
       if (isBetFast) {
         setTimeout(() => {
           setLoading(false);
@@ -287,6 +322,11 @@ const Home = () => {
     }, 300);
   };
 
+  useEffect(() => {
+    setHistory(betHistory);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <main className="flex flex-col items-center lg:h-screen bg-zinc-800">
       <div className="react-joyride" />
@@ -306,7 +346,7 @@ const Home = () => {
                               class="px-3 py-1 border border-transparent rounded-full font-semibold bg-white/5 z-50">History</span>
                       </div>
                        */}
-            <div
+            {/* <div
               id="step-gameHistory"
               className="flex items-center text-xs justify-start gap-1 flex-grow max-w-xl min-w-12 overflow-x-auto text-zinc-500 whitespace-nowrap"
               style={{
@@ -317,6 +357,30 @@ const Home = () => {
               <span className="px-3 py-1 border border-transparent rounded-full font-semibold bg-white/5 z-50">
                 History
               </span>
+            </div> */}
+
+            <div
+              id="step-gameHistory"
+              className="flex items-center text-xs  justify-start gap-1 flex-grow max-w-xl min-w-12  overflow-x-auto text-zinc-500 whitespace-nowrap"
+              style={{
+                maskImage:
+                  "linear-gradient(to right, black 0%, black 80%, transparent)",
+              }}
+            >
+              {history?.map((bet, i) => (
+                <span
+                  key={i}
+                  className={`px-3 py-1  animate__animated rounded-full border border-transparent  cursor-pointer font-semibold 
+                  ${
+                    bet?.result === "win"
+                      ? "bg-stakeGreen/5 text-stakeGreen hover:border-stakeGreen"
+                      : "bg-white/5 hover:border-white/10"
+                  }
+                 z-50`}
+                >
+                  {bet?.winner}
+                </span>
+              ))}
             </div>
             <button className="ml-auto disabled:opacity-50 text-white/50 active:text-white">
               <svg

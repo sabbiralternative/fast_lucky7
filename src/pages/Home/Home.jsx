@@ -29,7 +29,7 @@ const Home = () => {
   const [singlePNL, setSinglePNL] = useState(null);
   const [isMute, setIsMute] = useState(false);
   const dispatch = useDispatch();
-  const storedBetHistory = localStorage.getItem("betHistory");
+  const storedBetHistory = localStorage.getItem("fast_lucky7_betHistory");
   const storedMute = localStorage.getItem("isMute") || false;
   const betHistory = storedBetHistory ? JSON.parse(storedBetHistory) : [];
   const [history, setHistory] = useState([]);
@@ -180,7 +180,7 @@ const Home = () => {
       };
       let betHistory = [];
 
-      const storedBetHistory = localStorage.getItem("betHistory");
+      const storedBetHistory = localStorage.getItem("fast_lucky7_betHistory");
       if (storedBetHistory) {
         betHistory = JSON.parse(storedBetHistory);
       }
@@ -211,7 +211,10 @@ const Home = () => {
                   result: "loss",
                 });
               }
-              localStorage.setItem("betHistory", JSON.stringify(betHistory));
+              localStorage.setItem(
+                "fast_lucky7_betHistory",
+                JSON.stringify(betHistory)
+              );
               setHistory(betHistory);
             },
             isBetFast ? 500 : 1000

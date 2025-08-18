@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { playStakeChangeSound } from "../../utils/sound";
 import StakeAnimation from "./StakeAnimation";
 import { isDown, isEven, isOdd, isSeven, isUp } from "../../utils";
+import Lock from "../../assets/Icon/Lock";
 
 const BetSlip = ({
   setShowTotalWinAmount,
@@ -38,6 +39,8 @@ const BetSlip = ({
     const timeout = setTimeout(() => {
       setAnimation([]);
       setStakeState((prev) => {
+        const allStake = { ...prev };
+
         const maxSerial = Math.max(
           0,
           ...Object.values(prev)
@@ -45,8 +48,27 @@ const BetSlip = ({
             .filter((serial) => serial !== undefined)
         );
 
+        if (key === "Even") {
+          allStake.Odd.lock = true;
+        }
+        if (key === "Odd") {
+          allStake.Even.lock = true;
+        }
+        if (key === "Up") {
+          allStake.Down.lock = true;
+        }
+        if (key === "Down") {
+          allStake.Up.lock = true;
+        }
+        if (key === "Red") {
+          allStake.Black.lock = true;
+        }
+        if (key === "Black") {
+          allStake.Red.lock = true;
+        }
+
         return {
-          ...prev,
+          ...allStake,
           [key]: {
             eventId: formatData.eventId,
             eventName: formatData.eventName,
@@ -87,7 +109,6 @@ const BetSlip = ({
     <div
       id="step-betOptions"
       className={`grid gap-0.5 justify-items-center  lg:pb-12 justify-center grid-cols-6 mx-auto max-w-md w-full p-2`}
-      style={{ pointerEvents: "auto" }}
     >
       <div
         onClick={() =>
@@ -102,12 +123,15 @@ const BetSlip = ({
               isEven(rank) && isAnimationEnd
                 ? "border-stakeGreen"
                 : "border-transparent"
-            }`}
-        style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
+            } ${
+          stakeState?.Even?.lock ? "pointer-events-none" : "cursor-pointer"
+        }`}
+        style={{ gridColumn: "span 2 / span 2" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">
           Even
         </span>
+        {stakeState?.Even?.lock && <Lock />}
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x2.1
         </span>
@@ -132,12 +156,13 @@ const BetSlip = ({
             isUp(rank_number) && isAnimationEnd
               ? "border-stakeGreen"
               : "border-transparent"
-          }`}
-        style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
+          } ${stakeState?.Up?.lock ? "pointer-events-none" : "cursor-pointer"}`}
+        style={{ gridColumn: "span 2 / span 2" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-green">
           Up
         </span>
+        {stakeState?.Up?.lock && <Lock />}
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x2
         </span>
@@ -162,12 +187,13 @@ const BetSlip = ({
            isOdd(rank) && isAnimationEnd
              ? "border-stakeGreen"
              : "border-transparent"
-         }`}
-        style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
+         } ${stakeState?.Odd?.lock ? "pointer-events-none" : "cursor-pointer"}`}
+        style={{ gridColumn: "span 2 / span 2" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">
           Odd
         </span>
+        {stakeState?.Odd?.lock && <Lock />}
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x1.8
         </span>
@@ -188,13 +214,13 @@ const BetSlip = ({
             price: 3.75,
           })
         }
-        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20 cursor-pointer
            ${
              suit === "D" && isAnimationEnd
                ? "border-stakeGreen"
                : "border-transparent"
            }`}
-        style={{ gridColumn: "span 1 / span 1", pointerEvents: "auto" }}
+        style={{ gridColumn: "span 1 / span 1" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-red">
           ♦
@@ -218,13 +244,13 @@ const BetSlip = ({
             price: 3.75,
           })
         }
-        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20 cursor-pointer
           ${
             suit === "H" && isAnimationEnd
               ? "border-stakeGreen"
               : "border-transparent"
           }`}
-        style={{ gridColumn: "span 1 / span 1", pointerEvents: "auto" }}
+        style={{ gridColumn: "span 1 / span 1" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-red">
           ♥
@@ -249,13 +275,13 @@ const BetSlip = ({
             price: 11.5,
           })
         }
-        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20 cursor-pointer
           ${
             isSeven(rank_number) && isAnimationEnd
               ? "border-stakeGreen"
               : "border-transparent"
           }`}
-        style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
+        style={{ gridColumn: "span 2 / span 2" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-blue">
           7
@@ -280,13 +306,13 @@ const BetSlip = ({
             price: 3.75,
           })
         }
-        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20 cursor-pointer
            ${
              suit === "S" && isAnimationEnd
                ? "border-stakeGreen"
                : "border-transparent"
            }`}
-        style={{ gridColumn: "span 1 / span 1", pointerEvents: "auto" }}
+        style={{ gridColumn: "span 1 / span 1" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">
           ♠
@@ -310,13 +336,13 @@ const BetSlip = ({
             price: 3.75,
           })
         }
-        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20
+        className={`relative flex bg-white/5  w-full items-center border justify-center h-14 lg:h-20 cursor-pointer
           border-transparent ${
             suit === "C" && isAnimationEnd
               ? "border-stakeGreen"
               : "border-transparent"
           }`}
-        style={{ gridColumn: "span 1 / span 1", pointerEvents: "auto" }}
+        style={{ gridColumn: "span 1 / span 1" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">
           ♣
@@ -345,12 +371,15 @@ const BetSlip = ({
             (suit === "H" && isAnimationEnd) || (suit === "D" && isAnimationEnd)
               ? "border-stakeGreen"
               : "border-transparent"
-          }`}
-        style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
+          } ${
+          stakeState?.Red?.lock ? "pointer-events-none" : "cursor-pointer"
+        }`}
+        style={{ gridColumn: "span 2 / span 2" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-red">
           ♥ ♦
         </span>
+        {stakeState?.Red?.lock && <Lock />}
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x1.98
         </span>
@@ -376,12 +405,15 @@ const BetSlip = ({
              isDown(rank_number) && isAnimationEnd
                ? "border-stakeGreen"
                : "border-transparent"
-           }`}
-        style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
+           } ${
+          stakeState?.Down?.lock ? "pointer-events-none" : "cursor-pointer"
+        }`}
+        style={{ gridColumn: "span 2 / span 2" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-pink">
           DOWN
         </span>
+        {stakeState?.Down?.lock && <Lock />}
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x2
         </span>
@@ -407,12 +439,15 @@ const BetSlip = ({
               (suit === "S" && isAnimationEnd)
                 ? "border-stakeGreen"
                 : "border-transparent"
-            }`}
-        style={{ gridColumn: "span 2 / span 2", pointerEvents: "auto" }}
+            } ${
+          stakeState?.Black?.lock ? "pointer-events-none" : "cursor-pointer"
+        }`}
+        style={{ gridColumn: "span 2 / span 2" }}
       >
         <span className="absolute text-2xl font-bold opacity-80 -translate-y-1/2 top-1/2 text-gray">
           ♠ ♣
         </span>
+        {stakeState?.Black?.lock && <Lock />}
         <span className="absolute text-white/20 font-mono bottom-0 text-[10px]">
           x1.98
         </span>

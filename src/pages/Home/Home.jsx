@@ -86,46 +86,52 @@ const Home = () => {
   });
 
   const handleClick = () => {
-    setLoading(true);
-    setIsAnimationEnd(false);
+    if (balance > 0) {
+      setLoading(true);
+      setIsAnimationEnd(false);
 
-    const filterPlacedBet = Object.values(stakeState).filter((bet) => bet.show);
+      const filterPlacedBet = Object.values(stakeState).filter(
+        (bet) => bet.show
+      );
 
-    let payload = filterPlacedBet.map((bet) => ({
-      eventId: 30001,
-      eventName: "Fast Lucky 7A",
-      isback: 0,
-      price: bet?.price,
-      runner_name: bet?.runner_name,
-      stake: bet?.stake,
-    }));
+      let payload = filterPlacedBet.map((bet) => ({
+        eventId: 30001,
+        eventName: "Fast Lucky 7A",
+        isback: 0,
+        price: bet?.price,
+        runner_name: bet?.runner_name,
+        stake: bet?.stake,
+      }));
 
-    if (styleIndex === 1) {
-      playCardBackSound();
-      setShowCard(true);
-      setStyleIndex(0);
-      if (!isBetFast) {
-        setTimeout(() => {
-          setShowCard(false);
-        }, 200);
-      }
-    }
-
-    if (payload?.length > 0) {
-      handleOrder(payload);
-    }
-
-    if (!isBetFast) {
-      let steps = 0;
-      const totalSteps = 6;
-      const interval = setInterval(() => {
-        if (steps <= totalSteps) {
-          updateCards(steps);
-          steps++;
-        } else {
-          clearInterval(interval);
+      if (styleIndex === 1) {
+        playCardBackSound();
+        setShowCard(true);
+        setStyleIndex(0);
+        if (!isBetFast) {
+          setTimeout(() => {
+            setShowCard(false);
+          }, 200);
         }
-      }, 300);
+      }
+
+      if (payload?.length > 0) {
+        handleOrder(payload);
+      }
+
+      if (!isBetFast) {
+        let steps = 0;
+        const totalSteps = 6;
+        const interval = setInterval(() => {
+          if (steps <= totalSteps) {
+            updateCards(steps);
+            steps++;
+          } else {
+            clearInterval(interval);
+          }
+        }, 300);
+      }
+    } else {
+      toast.error("Insufficient Balance");
     }
   };
 
@@ -249,7 +255,7 @@ const Home = () => {
         }, 1000);
       }
     } else {
-      toast.success(res?.error?.description[0]?.message);
+      toast.error(res?.Message);
     }
   };
 

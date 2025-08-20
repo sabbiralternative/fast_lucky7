@@ -1,28 +1,19 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
-import { useAuthMutation } from "../redux/features/auth/authApi";
 import { useEffect } from "react";
-import { setUser } from "../redux/features/auth/authSlice";
+import { useAuth } from "../hooks/auth";
 
 const MainLayout = () => {
   const { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const [handleAuth] = useAuthMutation();
+  const { mutate: handleAuth } = useAuth();
 
   useEffect(() => {
     let intervalId;
 
     if (token) {
       const getUser = async () => {
-        const res = await handleAuth({ token }).unwrap();
-
-        dispatch(
-          setUser({
-            username: res.username,
-            balance: res?.balance,
-            token,
-          })
-        );
+        handleAuth(token);
       };
 
       getUser();

@@ -1,19 +1,22 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Home from "../pages/Home/Home";
-import ErrorPage from "../pages/ErrorPage/ErrorPage";
+import Auth from "../pages/Auth/Auth";
 
 export const router = createBrowserRouter(
   [
     {
       path: "/",
       element: <App />,
-      errorElement: <ErrorPage />,
 
       children: [
         {
           index: true,
           element: <Home />,
+        },
+        {
+          path: "/:token",
+          element: <Auth />,
         },
       ],
     },

@@ -2,8 +2,10 @@ import { useSelector } from "react-redux";
 import { Settings } from "../../api";
 import { useStateContext } from "../../context/ApiProvider";
 import { useEffect } from "react";
+import { useAuth } from "../../hooks/auth";
 
 const Header = () => {
+  const { mutate: handleAuth } = useAuth();
   const { totalWinAmount, showTotalWin, setShowTotalWin } = useStateContext();
   const { balance, username, token } = useSelector((state) => state.auth);
   const handleOpenLobby = () => {
@@ -247,6 +249,7 @@ const Header = () => {
           </span>
         </span>
         <svg
+          onClick={() => handleAuth(token)}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           fill="currentColor"

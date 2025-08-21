@@ -22,8 +22,10 @@ import { setBalance } from "../../redux/features/auth/authSlice";
 import HowToPlay from "./HowToPlay";
 import RecentPNL from "./RecentPNL";
 import SinglePNL from "./SinglePNL";
+import { useAuth } from "../../hooks/auth";
 
 const Home = () => {
+  const { mutate: handleAuth } = useAuth();
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showRecentPNL, setShowRecentPNL] = useState(false);
   const [singlePNL, setSinglePNL] = useState(null);
@@ -89,9 +91,6 @@ const Home = () => {
     if (balance > 0) {
       setTotalWinAmount(null);
 
-      // setLoading(true);
-      // setIsAnimationEnd(false);
-
       const filterPlacedBet = Object.values(stakeState).filter(
         (bet) => bet.show
       );
@@ -105,33 +104,9 @@ const Home = () => {
         stake: bet?.stake,
       }));
 
-      // if (styleIndex === 1) {
-      //   playCardBackSound();
-      //   setShowCard(true);
-      //   setStyleIndex(0);
-      //   if (!isBetFast) {
-      //     setTimeout(() => {
-      //       setShowCard(false);
-      //     }, 200);
-      //   }
-      // }
-
       if (payload?.length > 0) {
         await handleOrder(payload);
       }
-
-      // if (!isBetFast) {
-      //   let steps = 0;
-      //   const totalSteps = 6;
-      //   const interval = setInterval(() => {
-      //     if (steps <= totalSteps) {
-      //       updateCards(steps);
-      //       steps++;
-      //     } else {
-      //       clearInterval(interval);
-      //     }
-      //   }, 300);
-      // }
     } else {
       toast.error("Insufficient Balance");
     }
@@ -169,11 +144,8 @@ const Home = () => {
     for (const bet of payload) {
       totalStake += bet?.stake;
     }
-
     const res = await addOrder(payload).unwrap();
-
     if (res?.success) {
-      /*  */
       setLoading(true);
       setIsAnimationEnd(false);
       if (styleIndex === 1) {
@@ -198,7 +170,7 @@ const Home = () => {
           }
         }, 300);
       }
-      /*  */
+
       const historyObj = {
         card: res?.result?.card,
         client_seed: res?.result?.client_seed,
@@ -219,53 +191,9 @@ const Home = () => {
         betHistory = JSON.parse(storedBetHistory);
       }
 
-      // setTimeout(
-      //   () => {
-      //     setTimeout(
-      //       () => {
-      //         if (res?.result?.pnl > 0) {
-      //           dispatch(setBalance(res?.result?.pnl + balance));
-      //           betHistory.unshift({
-      //             ...historyObj,
-      //             result: "win",
-      //           });
-
-      //           playWinSound();
-      //         } else {
-      //           dispatch(setBalance(balance - totalStake));
-      //           betHistory.unshift({
-      //             ...historyObj,
-      //             result: "loss",
-      //           });
-      //         }
-      //         localStorage.setItem(
-      //           "fast_lucky7_betHistory",
-      //           JSON.stringify(betHistory)
-      //         );
-      //         setHistory(betHistory);
-      //       },
-      //       isBetFast ? 500 : 1000
-      //     );
-      //     setShowTotalWin(res?.result?.pnl !== 0);
-      //     setShowTotalWinAmount(true);
-
-      //     if (res?.result?.pnl > 0) {
-      //       setTotalWinAmount(res?.result?.pnl !== 0 ? res?.result?.pnl : null);
-      //     }
-      //     payload = [];
-
-      //     setWinCard({
-      //       card: res?.result?.card,
-      //       suit: res?.result?.suit,
-      //       rank: res?.result?.rank,
-      //       rank_number: res?.result?.rank_number,
-      //     });
-      //   },
-      //   isBetFast ? 500 : 2000
-      // );
-
       setTimeout(
         () => {
+          handleAuth(token);
           if (res?.result?.pnl > 0) {
             dispatch(setBalance(res?.result?.pnl + balance));
             betHistory.unshift({
@@ -281,13 +209,10 @@ const Home = () => {
               result: "loss",
             });
           }
-
+          payload = [];
           setShowTotalWin(res?.result?.pnl !== 0);
           setShowTotalWinAmount(true);
           setTotalWinAmount(res?.result?.pnl !== 0 ? res?.result?.pnl : null);
-
-          payload = [];
-
           setWinCard({
             card: res?.result?.card,
             suit: res?.result?.suit,

@@ -9,7 +9,6 @@ const FiftyTwoCard = ({
   setStyleIndex,
   winCard,
   totalWinAmount,
-  multiplier,
   isAnimationEnd,
   isBetFast,
   shuffle,
@@ -131,7 +130,6 @@ const FiftyTwoCard = ({
               shuffle={shuffle}
               isBetFast={isBetFast}
               isAnimationEnd={isAnimationEnd}
-              multiplier={multiplier}
               totalWinAmount={totalWinAmount}
               winCard={winCard}
               styleIndex={styleIndex}

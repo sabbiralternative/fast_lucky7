@@ -6,7 +6,7 @@ import notice from "../../notice.json";
 export const ApiContext = createContext(null);
 
 const ApiProvider = ({ children }) => {
-  const [totalWinAmount, setTotalWinAmount] = useState(0);
+  const [totalWinAmount, setTotalWinAmount] = useState(null);
   const [showTotalWin, setShowTotalWin] = useState(false);
   const [noticeLoaded, setNoticeLoaded] = useState(false);
   const baseUrl = notice?.result?.settings?.baseUrl;

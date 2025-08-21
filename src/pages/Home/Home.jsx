@@ -46,7 +46,7 @@ const Home = () => {
     rank: null,
     rank_number: null,
   });
-  const [multiplier, setMultiplier] = useState(null);
+
   const [showTotalWinAmount, setShowTotalWinAmount] = useState(false);
   const { totalWinAmount, setTotalWinAmount, setShowTotalWin } =
     useStateContext();
@@ -87,6 +87,8 @@ const Home = () => {
 
   const handleClick = async () => {
     if (balance > 0) {
+      setTotalWinAmount(null);
+
       // setLoading(true);
       // setIsAnimationEnd(false);
 
@@ -217,37 +219,73 @@ const Home = () => {
         betHistory = JSON.parse(storedBetHistory);
       }
 
+      // setTimeout(
+      //   () => {
+      //     setTimeout(
+      //       () => {
+      //         if (res?.result?.pnl > 0) {
+      //           dispatch(setBalance(res?.result?.pnl + balance));
+      //           betHistory.unshift({
+      //             ...historyObj,
+      //             result: "win",
+      //           });
+
+      //           playWinSound();
+      //         } else {
+      //           dispatch(setBalance(balance - totalStake));
+      //           betHistory.unshift({
+      //             ...historyObj,
+      //             result: "loss",
+      //           });
+      //         }
+      //         localStorage.setItem(
+      //           "fast_lucky7_betHistory",
+      //           JSON.stringify(betHistory)
+      //         );
+      //         setHistory(betHistory);
+      //       },
+      //       isBetFast ? 500 : 1000
+      //     );
+      //     setShowTotalWin(res?.result?.pnl !== 0);
+      //     setShowTotalWinAmount(true);
+
+      //     if (res?.result?.pnl > 0) {
+      //       setTotalWinAmount(res?.result?.pnl !== 0 ? res?.result?.pnl : null);
+      //     }
+      //     payload = [];
+
+      //     setWinCard({
+      //       card: res?.result?.card,
+      //       suit: res?.result?.suit,
+      //       rank: res?.result?.rank,
+      //       rank_number: res?.result?.rank_number,
+      //     });
+      //   },
+      //   isBetFast ? 500 : 2000
+      // );
+
       setTimeout(
         () => {
-          setTimeout(
-            () => {
-              if (res?.result?.pnl > 0) {
-                dispatch(setBalance(res?.result?.pnl + balance));
-                betHistory.unshift({
-                  ...historyObj,
-                  result: "win",
-                });
+          if (res?.result?.pnl > 0) {
+            dispatch(setBalance(res?.result?.pnl + balance));
+            betHistory.unshift({
+              ...historyObj,
+              result: "win",
+            });
 
-                playWinSound();
-              } else {
-                dispatch(setBalance(balance - totalStake));
-                betHistory.unshift({
-                  ...historyObj,
-                  result: "loss",
-                });
-              }
-              localStorage.setItem(
-                "fast_lucky7_betHistory",
-                JSON.stringify(betHistory)
-              );
-              setHistory(betHistory);
-            },
-            isBetFast ? 500 : 1000
-          );
+            playWinSound();
+          } else {
+            dispatch(setBalance(balance - totalStake));
+            betHistory.unshift({
+              ...historyObj,
+              result: "loss",
+            });
+          }
+
           setShowTotalWin(res?.result?.pnl !== 0);
           setShowTotalWinAmount(true);
           setTotalWinAmount(res?.result?.pnl !== 0 ? res?.result?.pnl : null);
-          setMultiplier((res?.result?.pnl / totalPlaceBet).toFixed(2));
+
           payload = [];
 
           setWinCard({
@@ -256,8 +294,13 @@ const Home = () => {
             rank: res?.result?.rank,
             rank_number: res?.result?.rank_number,
           });
+          localStorage.setItem(
+            "fast_lucky7_betHistory",
+            JSON.stringify(betHistory)
+          );
+          setHistory(betHistory);
         },
-        isBetFast ? 500 : 2000
+        isBetFast ? 1000 : 3000
       );
 
       if (isBetFast) {
@@ -565,7 +608,6 @@ const Home = () => {
               shuffle={shuffle}
               isBetFast={isBetFast}
               isAnimationEnd={isAnimationEnd}
-              multiplier={multiplier}
               totalWinAmount={totalWinAmount}
               winCard={winCard}
               setStyleIndex={setStyleIndex}

@@ -1,11 +1,11 @@
 {
   "status": {
-    "statusCode": "0",
+    "statusCode": 200,
     "statusDesc": "Success"
   },
   "result": {
     "settings": {
-      "siteTitle": "Jainbook",
+      "siteTitle": "Fast Lucky 7",
       "disabledDevtool": false,
       "baseUrl": "/fast_lucky7",
       "lobby": "https://aura365.io"

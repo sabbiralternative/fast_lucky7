@@ -356,6 +356,7 @@ const Home = () => {
   };
 
   const errorMessage = sessionStorage.getItem("errorMessage");
+  // const { token } = useSelector((state) => state.auth);
 
   return token ? (
     <main className="flex flex-col items-center lg:h-screen bg-zinc-800">
@@ -396,7 +397,7 @@ const Home = () => {
 
             <div
               id="step-gameHistory"
-              className="flex items-center text-xs  justify-start gap-1 flex-grow max-w-xl min-w-12  overflow-x-auto text-zinc-500 whitespace-nowrap"
+              className="flex items-center text-xs  justify-start gap-1 flex-grow max-w-[170px] md:max-w-xl min-w-12  overflow-x-auto text-zinc-500 whitespace-nowrap"
               style={{
                 maskImage:
                   "linear-gradient(to right, black 0%, black 80%, transparent)",

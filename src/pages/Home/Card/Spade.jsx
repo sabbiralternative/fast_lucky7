@@ -24,7 +24,7 @@ const Spade = ({ rank }) => {
           </svg>
         </div>
         <span className="absolute flex flex-col items-center justify-center top-0  text-xl lg:text-3xl font-mono left-1 font-semibold">
-          <span className=" text-[#2C2C2C]">{rank}</span>
+          <span className=" text-[#2C2C2C]">{rank == 1 ? "A" : rank}</span>
           <div className="w-4 ">
             <svg
               xmlns="http://www.w3.org/2000/svg"

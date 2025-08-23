@@ -24,7 +24,7 @@ const Heart = ({ rank }) => {
           </svg>
         </div>
         <span className="absolute flex flex-col items-center justify-center top-0  text-xl lg:text-3xl font-mono left-1 font-semibold">
-          <span className="text-[#EC5148]">{rank}</span>
+          <span className="text-[#EC5148]">{rank == 1 ? "A" : rank}</span>
           <div className="w-4 ">
             <svg
               xmlns="http://www.w3.org/2000/svg"

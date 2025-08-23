@@ -11,6 +11,7 @@ export const useAuth = () => {
     mutationKey: ["auth"],
     mutationFn: async (token) => {
       const { data } = await AxiosSecure.post(API.auth, { token });
+      console.log({ data });
       if (data?.success) {
         const result = {
           operatorId: data?.result?.operatorId,

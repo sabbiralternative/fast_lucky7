@@ -7,7 +7,7 @@
     "settings": {
       "siteTitle": "Fast Lucky 7",
       "disabledDevtool": false,
-      "baseUrl": "/fast_lucky7",
+      "baseUrl": "",
       "lobby": "https://aura365.io"
     },
 

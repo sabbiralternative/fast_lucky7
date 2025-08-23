@@ -1,37 +1,37 @@
 import { useSelector } from "react-redux";
 import { Settings } from "../../api";
-import { useStateContext } from "../../context/ApiProvider";
-import { useEffect } from "react";
+// import { useStateContext } from "../../context/ApiProvider";
+// import { useEffect } from "react";
 import { useAuth } from "../../hooks/auth";
 
 const Header = () => {
   const { mutate: handleAuth } = useAuth();
-  const { totalWinAmount, showTotalWin, setShowTotalWin } = useStateContext();
+  // const { totalWinAmount, showTotalWin, setShowTotalWin } = useStateContext();
   const { balance, username, token } = useSelector((state) => state.auth);
   const handleOpenLobby = () => {
     const url = `${Settings.lobby}/${token}`;
     window.location.href = url;
   };
   /* Close win amount */
-  useEffect(() => {
-    if (showTotalWin) {
-      const timeOut = setTimeout(() => {
-        setShowTotalWin(false);
-      }, 1000);
-      return () => clearTimeout(timeOut);
-    }
-  }, [setShowTotalWin, showTotalWin]);
+  // useEffect(() => {
+  //   if (showTotalWin) {
+  //     const timeOut = setTimeout(() => {
+  //       setShowTotalWin(false);
+  //     }, 1000);
+  //     return () => clearTimeout(timeOut);
+  //   }
+  // }, [setShowTotalWin, showTotalWin]);
 
   return (
     <div className="flex items-center justify-between w-full p-2 text-white shadow-xl bg-black/10">
-      {/* <div
+      <div
         onClick={handleOpenLobby}
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           gap: "10px",
-          padding: "6px 15px",
+          padding: "3px 10px",
           fontSize: "12px",
           fontWeight: 600,
           borderWidth: "1px",
@@ -40,6 +40,8 @@ const Header = () => {
           borderRadius: "9999px",
           cursor: "pointer",
           width: "fit-content",
+          color: "white",
+          marginLeft: "10px",
         }}
       >
         <svg
@@ -84,15 +86,15 @@ const Header = () => {
           />
           <path
             d="M133.9 34.4414L114.7 41.2414C114.6 36.3414 113.4 31.7414 110.8 27.7414C110.3 26.9414 109.7 26.0414 109 25.3414L125.8 14.0414C126.8 15.2414 127.7 16.4414 128.5 17.7414C131.8 22.6414 133.5 28.3414 133.9 34.4414Z"
-            fill="black"
+            fill="currentColor"
           />
           <path
             d="M39.3 30.4414C33.5 35.3414 28.9002 40.7414 25.4002 46.3414L20.7002 45.3414L10 43.0414C14.9 35.3414 21.5 27.9414 29.4 21.3414L38.8 30.0414L39.3 30.4414Z"
-            fill="black"
+            fill="currentColor"
           />
           <path
             d="M68.8002 109.141C58.2002 112.341 47.8002 113.441 38.4002 112.441C37.7002 112.341 36.9002 112.341 36.2002 112.141L46.2002 95.3415C52.7002 96.0415 59.9002 95.3415 67.2002 93.2415C67.5002 93.1415 67.7002 93.1414 67.9002 93.0414L68.7002 108.641L68.8002 109.141Z"
-            fill="black"
+            fill="currentColor"
           />
           <path
             d="M24.6002 85.1415L7.5002 97.3415C6.7002 96.4415 6.0002 95.4415 5.4002 94.3415C3.0002 90.5415 1.5002 86.4415 0.700195 82.1415C0.300195 79.9415 0.1 77.7415 0 75.5415L2.5 74.7415L18.9002 69.2415C19.0002 74.0415 20.3002 78.4415 22.8002 82.4415C23.3002 83.4415 23.9002 84.2415 24.6002 85.1415Z"
@@ -100,11 +102,11 @@ const Header = () => {
           />
           <path
             d="M95.1001 0.141422L89.5001 10.2414L86.7001 15.3414C80.0001 14.8414 72.6001 15.7414 65.1001 18.1414L65.0001 16.5414L64.6001 4.14142C73.3001 1.44142 81.8001 0.0414213 89.8001 0.0414213C91.5001 -0.0585787 93.3001 0.0414217 95.1001 0.141422Z"
-            fill="black"
+            fill="currentColor"
           />
           <path
             d="M126.2 66.3414C126.2 66.4414 126.2 66.4414 126.2 66.3414C121.2 74.4414 114.5 82.1414 106.2 88.9414C106.2 88.9414 106.1 88.9414 106.1 89.0414L94.6001 79.1414C95.3001 78.5414 96.1001 77.9414 96.8001 77.3414C101.7 73.0414 105.8 68.3414 109 63.4414L126.2 66.3414Z"
-            fill="black"
+            fill="currentColor"
           />
           <defs>
             <linearGradient
@@ -115,14 +117,14 @@ const Header = () => {
               y2="63.3372"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stopColor="black" />
-              <stop offset="0.5594" stopColor="black" />
-              <stop offset={1} stopColor="black" />
+              <stop stopColor="currentColor" />
+              <stop offset="0.5594" stopColor="currentColor" />
+              <stop offset={1} stopColor="currentColor" />
             </linearGradient>
           </defs>
         </svg>
-        <span style={{ color: "black" }}>Lobby</span>
-      </div> */}
+        <span>Lobby</span>
+      </div>
       <div
         onClick={handleOpenLobby}
         className="flex items-center gap-1 py-2 pl-2 pr-3 text-xs font-semibold border rounded-full cursor-pointer border-white/10"
@@ -230,7 +232,7 @@ const Header = () => {
               <div className="font-medium">
                 <span>₹{balance}</span>
                 <div>
-                  <div
+                  {/* <div
                     className={`absolute right-0 z-50 text-sm font-semibold -bottom-6 ${
                       showTotalWin && totalWinAmount
                         ? "animate__animated animate__fadeOutUp animate__slow"
@@ -242,7 +244,7 @@ const Header = () => {
                     {totalWinAmount && showTotalWin
                       ? `+${totalWinAmount}`
                       : null}
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

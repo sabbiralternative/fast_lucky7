@@ -22,10 +22,8 @@ import { setBalance } from "../../redux/features/auth/authSlice";
 import HowToPlay from "./HowToPlay";
 import RecentPNL from "./RecentPNL";
 import SinglePNL from "./SinglePNL";
-import { useAuth } from "../../hooks/auth";
 
 const Home = () => {
-  const { mutate: handleAuth } = useAuth();
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [showRecentPNL, setShowRecentPNL] = useState(false);
   const [singlePNL, setSinglePNL] = useState(null);
@@ -193,7 +191,6 @@ const Home = () => {
 
       setTimeout(
         () => {
-          handleAuth(token);
           if (res?.result?.pnl > 0) {
             dispatch(setBalance(res?.result?.pnl + balance));
             betHistory.unshift({
@@ -225,7 +222,7 @@ const Home = () => {
           );
           setHistory(betHistory);
         },
-        isBetFast ? 1000 : 3000
+        isBetFast ? 500 : 2000
       );
 
       if (isBetFast) {
@@ -658,7 +655,7 @@ const Home = () => {
       </div>
     </main>
   ) : (
-    <div className="h-screen flex flex-col items-center justify-center">
+    <div className="error-container">
       <div className="alert alert-danger text-center m-0 " role="alert">
         {errorMessage ||
           "URL parameters are missing or invalid. Key: token | Value"}
